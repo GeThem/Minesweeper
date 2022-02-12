@@ -1,16 +1,16 @@
 from random import randrange
 
 while 1:
-    mode = int(input('1. Newbie 10 mines (9x9)\n2. '
-                     'Amateur 40 mines (16x16)\n3. Professional 99 mines (16x30)\n'))
-    if 1 > mode or mode > 3:
-        print('No such mode')
-    else:
+    mode = input('1. Newbie 10 mines (9x9)\n2. '
+                     'Amateur 40 mines (16x16)\n3. Professional 99 mines (16x30)\n')
+    if mode.isdigit() and (1 <= int(mode) <= 3):
         break
+    else:
+        print('No such mode')
 
-if mode == 1:
+if mode == '1':
     rows, columns, minecount = 9, 9, 10
-elif mode == 2:
+elif mode == '2':
     rows, columns, minecount = 16, 16, 40
 else:
     rows, columns, minecount = 9, 9, 10
