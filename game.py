@@ -28,7 +28,7 @@ screen.fill(background_color)
 pygame.draw.rect(screen, play_background_color,
                  (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6, WINDOW_SIZE[1] - top_info_size - boarder + 6))
 # covered tiles
-tiles = tuple(tuple([x, True] for x in range(MS.columns)) for _ in range(MS.rows))
+tiles = tuple(tuple([x, 1] for x in range(MS.columns)) for _ in range(MS.rows))
 
 numbers_colors = {
     -1: (180, 0, 0),
@@ -114,7 +114,7 @@ while 1:
         tile_status = tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1]
 
     # draw tiles
-    if p_tile and p_tile[:2] != (mouse_pos_ind[0], mouse_pos_ind[1]):
+    if p_tile and p_tile[:2] != mouse_pos_ind:
         if p_tile[2] in (1, 2):
             pygame.draw.rect(screen, tile_color,
                             (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1),
@@ -128,11 +128,12 @@ while 1:
             tiles[p_tile[1]][p_tile[0]][1] = 3
     if isinstance(cur_tile, tuple):
         if cur_tile[3] == 0:
-            tiles[cur_tile[1]][cur_tile[0]][1] = 1
+            clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile[3], 1)
+            sum_of_closed_tiles -= 1
             for choicey in (cur_tile[1], MS.rows, 1), (MS.rows - 2, -1, -1), (1, MS.rows, 1):
                 for y2 in range(*choicey):
                     row_was_cleaned = 0
-                    for choicex in (cur_tile[0], MS.columns, 1), (MS.columns-2, -1, -1), (1, MS.columns, 1):
+                    for choicex in (cur_tile[0] + 1, MS.columns, 1), (MS.columns-2, -1, -1), (1, MS.columns, 1):
                         for x2 in range(*choicex):
                             if MS.matrix[y2][x2-choicex[2]] == 0 or MS.matrix[y2 - choicey[2]][x2] == 0:
                                 if clear(x2, y2, MS.matrix[y2][x2], tiles[y2][x2][1]):
@@ -146,7 +147,7 @@ while 1:
             clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile[3], 1)
             sum_of_closed_tiles -= 1
 
-    p_tile = (mouse_pos_ind[0], mouse_pos_ind[1], tile_status)
+    p_tile = [mouse_pos_ind[0], mouse_pos_ind[1], tile_status]
 
     # draw mine counter
     if MS.minecount != counter_prev or was_pressed_counter == 0:
@@ -169,23 +170,24 @@ while 1:
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 3:
                 if tile_status == 4:
-                    tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 2
+                    p_tile[2] = 2
                     pygame.draw.rect(screen, active_tile_color,
-                                    (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
-                                    1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
+                                    (1 + boarder + p_tile[0] * (tile_size + 1),
+                                    1 + top_info_size + p_tile[1] * (tile_size + 1),
                                     tile_size, tile_size))
 
                     MS.minecount += 1
                 elif tile_status == 2:
-                    tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 4
+                    p_tile[2] = 4
                     pygame.draw.rect(screen, active_tile_color,
-                                    (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
-                                    1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
+                                    (1 + boarder + p_tile[0] * (tile_size + 1),
+                                    1 + top_info_size + p_tile[1] * (tile_size + 1),
                                     tile_size, tile_size))
                     screen.blit(flag_img, (
-                        1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
-                        1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1)))
+                        1 + boarder + p_tile[0] * (tile_size + 1),
+                        1 + top_info_size + p_tile[1] * (tile_size + 1)))
                     MS.minecount -= 1
+                    print(p_tile)
             else:
                 is_pressed = True
                 was_pressed = True
