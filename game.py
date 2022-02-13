@@ -14,7 +14,7 @@ pygame.display.set_caption('Minesweeper')
 background_color = (210, 210, 210)
 play_background_color = (235, 235, 235)
 # tiles configuration
-tile_size = 26
+tile_size = 50
 tile_color = (112, 146, 190)
 active_tile_color = (142, 176, 220)
 tiles = tuple(tuple([x, 1] for x in range(MS.columns)) for _ in range(MS.rows))
@@ -63,6 +63,15 @@ def clear(x, y, cur_tile, status):
         screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1), (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
         tiles[y][x][1] = 0
         return True
+    elif status == 5:
+        number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_tile), 1, numbers_colors[cur_tile])
+        n_size = number.get_size()
+        pygame.draw.rect(screen, background_color,
+                         (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
+                          tile_size, tile_size))
+
+        screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1), (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
+        tiles[y][x][1] = 0
     else:
         return False
 
@@ -129,9 +138,10 @@ while 1:
                             tile_size, tile_size))
             screen.blit(flag_img, (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)))
             tiles[p_tile[1]][p_tile[0]][1] = 3
+    # if right button was released on closed tile, draw numbers
     if isinstance(cur_tile, tuple):
         if cur_tile[3] == 0:
-            clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile[3], 1)
+            clear(cur_tile[0], cur_tile[1], 0, 1)
             sum_of_closed_tiles -= 1
             for choicey in (cur_tile[1], MS.rows, 1), (MS.rows - 2, -1, -1), (1, MS.rows, 1):
                 for y2 in range(*choicey):
@@ -143,9 +153,13 @@ while 1:
                                     sum_of_closed_tiles -= 1
                     if not row_was_cleaned:
                         break
+        # lose condition
         elif cur_tile[3] == -1:
-            pygame.quit()
-            exit()
+            clear(cur_tile[0], cur_tile[1], -1, 5)
+            for y, row in enumerate(tiles):
+                for x, status in row:
+                    if 1 <= status <= 4:
+                        clear(x, y, MS.matrix[y][x], 5)
         else:
             clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile[3], 1)
             sum_of_closed_tiles -= 1
