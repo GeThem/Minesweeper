@@ -8,27 +8,15 @@ from pygame.locals import *
 
 pygame.init()
 
-pygame.display.set_caption('MS')
+pygame.display.set_caption('Minesweeper')
 # tiles configuration
 tile_size = 26
 tile_color = (112, 146, 190)
 active_tile_color = (142, 176, 220)
+tiles = tuple(tuple([x, 1] for x in range(MS.columns)) for _ in range(MS.rows))
+tile_status = 0  # 0 - closed tile/mouse out of screen, 1 - closed, 2 - closed active, 3 - flagged, 4 - flagged active
 flag_img = pygame.image.load('flag.png')
 flag_img = pygame.transform.scale(flag_img, (tile_size, tile_size))
-# window size
-boarder = 30
-top_info_size = 60
-WINDOW_SIZE = (1 + 2 * boarder + MS.columns * (tile_size + 1),
-               1 + boarder + top_info_size + MS.rows * (tile_size + 1))
-# screen design
-screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
-background_color = (210, 210, 210)
-play_background_color = (235, 235, 235)
-screen.fill(background_color)
-pygame.draw.rect(screen, play_background_color,
-                 (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6, WINDOW_SIZE[1] - top_info_size - boarder + 6))
-# covered tiles
-tiles = tuple(tuple([x, 1] for x in range(MS.columns)) for _ in range(MS.rows))
 
 numbers_colors = {
     -1: (180, 0, 0),
@@ -43,9 +31,21 @@ numbers_colors = {
     8: (168, 6, 15),
 }
 
+# window size
+boarder = 30
+top_info_size = 60
+WINDOW_SIZE = (1 + 2 * boarder + MS.columns * (tile_size + 1),
+               1 + boarder + top_info_size + MS.rows * (tile_size + 1))
+# screen design
+screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
+background_color = (210, 210, 210)
+play_background_color = (235, 235, 235)
+screen.fill(background_color)
+pygame.draw.rect(screen, play_background_color,
+                 (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6, WINDOW_SIZE[1] - top_info_size - boarder + 6))
+# mouse variables
 is_pressed = False
 was_pressed = False
-tile_status = False
 was_pressed_counter = 0
 
 
@@ -64,7 +64,7 @@ def clear(x, y, cur_tile, status):
     else:
         return False
 
-
+# draw closed tiles
 for y, row in enumerate(tiles):
     for x, status in row:
             pygame.draw.rect(screen, tile_color,
