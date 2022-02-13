@@ -22,10 +22,10 @@ no_mine = ()
 
 
 def generate():
-    # for x, y in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
-    #     y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
-    #     if 0 <= x_gr < columns and 0 <= y_gr < rows:
-    #         mines.pop(mines.index((x_gr, y_gr)))
+    for x, y in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
+        y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
+        if 0 <= x_gr < columns and 0 <= y_gr < rows:
+            mines.pop(mines.index((x_gr, y_gr)))
 
     for _ in range(minecount):
         mine_x, mine_y = mines.pop(randrange(len(mines)))
