@@ -4,11 +4,15 @@ from sys import exit
 
 clock = pygame.time.Clock()
 
-from pygame.locals import *
+from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 
 pygame.init()
 
 pygame.display.set_caption('Minesweeper')
+
+# background
+background_color = (210, 210, 210)
+play_background_color = (235, 235, 235)
 # tiles configuration
 tile_size = 26
 tile_color = (112, 146, 190)
@@ -38,8 +42,6 @@ WINDOW_SIZE = (1 + 2 * boarder + MS.columns * (tile_size + 1),
                1 + boarder + top_info_size + MS.rows * (tile_size + 1))
 # screen design
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
-background_color = (210, 210, 210)
-play_background_color = (235, 235, 235)
 screen.fill(background_color)
 pygame.draw.rect(screen, play_background_color,
                  (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6, WINDOW_SIZE[1] - top_info_size - boarder + 6))
@@ -63,6 +65,7 @@ def clear(x, y, cur_tile, status):
         return True
     else:
         return False
+
 
 # draw closed tiles
 for y, row in enumerate(tiles):
@@ -187,7 +190,6 @@ while 1:
                         1 + boarder + p_tile[0] * (tile_size + 1),
                         1 + top_info_size + p_tile[1] * (tile_size + 1)))
                     MS.minecount -= 1
-                    print(p_tile)
             else:
                 is_pressed = True
                 was_pressed = True
