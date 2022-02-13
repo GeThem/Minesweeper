@@ -89,6 +89,7 @@ time_now = 0
 sum_of_closed_tiles = MS.rows * MS.columns
 p_tile = 0
 counter_prev = MS.minecount_const
+game_is_going = 1
 while 1:
     cur_tile = ''
     # mouse position processing
@@ -159,6 +160,7 @@ while 1:
                         break
         # lose condition
         elif cur_tile[3] == -1:
+            game_is_going = 0
             clear(cur_tile[0], cur_tile[1], -1, 5)
             for y, row in enumerate(tiles):
                 for x, status in row:
@@ -180,7 +182,7 @@ while 1:
         screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_size[0] / 2, top_info_size / 2 - mine_count_size[1] / 2))
 
     # draw timer
-    if time_now <= 999:
+    if time_now <= 999 and game_is_going:
         if time_start:
             time_now = time() - time_start
         pygame.draw.rect(screen, tile_color,
@@ -190,9 +192,9 @@ while 1:
         screen.blit(timer, (WINDOW_SIZE[0] * 4 / 5 - timer_size[0] / 2, top_info_size / 2 - timer_size[1] / 2))
 
     # win condition
-    if MS.minecount_const == sum_of_closed_tiles:
-        pygame.quit()
-        exit()
+    if MS.minecount_const == sum_of_closed_tiles and game_is_going:
+        game_is_going = 0
+        clear(cur_tile[0], cur_tile[1], cur_tile[3], cur_tile[2])
 
     for event in pygame.event.get():
         if event.type == QUIT:
