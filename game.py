@@ -1,6 +1,7 @@
 import Minesweeper as MS
 import pygame
 from sys import exit
+from time import time
 
 clock = pygame.time.Clock()
 
@@ -14,7 +15,7 @@ pygame.display.set_caption('Minesweeper')
 background_color = (210, 210, 210)
 play_background_color = (235, 235, 235)
 # tiles configuration
-tile_size = 50
+tile_size = 30
 tile_color = (112, 146, 190)
 active_tile_color = (142, 176, 220)
 tiles = tuple(tuple([x, 1] for x in range(MS.columns)) for _ in range(MS.rows))
@@ -37,7 +38,7 @@ numbers_colors = {
 
 # window size
 boarder = 30
-top_info_size = 60
+top_info_size = 80
 WINDOW_SIZE = (1 + 2 * boarder + MS.columns * (tile_size + 1),
                1 + boarder + top_info_size + MS.rows * (tile_size + 1))
 # screen design
@@ -83,6 +84,8 @@ for y, row in enumerate(tiles):
                             (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                             tile_size, tile_size))
 
+time_start = 0
+time_now = 0
 sum_of_closed_tiles = MS.rows * MS.columns
 p_tile = 0
 counter_prev = MS.minecount_const
@@ -114,6 +117,7 @@ while 1:
                 if was_pressed_counter == 1:
                     MS.no_mine = mouse_pos_ind[0], mouse_pos_ind[1]
                     MS.generate()
+                    time_start = time()
             was_pressed = False
         else:
             if tile_status == 1:
@@ -170,10 +174,20 @@ while 1:
     if MS.minecount != counter_prev or was_pressed_counter == 0:
         counter_prev = MS.minecount
         pygame.draw.rect(screen, tile_color,
-                         (WINDOW_SIZE[0] / 2 - 30, top_info_size / 2 - 15, 60, 30))
-        mine_count = pygame.font.SysFont('arial', 27, 1).render(str(counter_prev), 1, (180, 50, 50))
+                         (WINDOW_SIZE[0] / 2 - 40, top_info_size / 2 - 24, 80, 46))
+        mine_count = pygame.font.SysFont('arial', 37, 1).render(str(counter_prev), 1, (150, 2, 2))
         mine_count_size = mine_count.get_size()
         screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_size[0] / 2, top_info_size / 2 - mine_count_size[1] / 2))
+
+    # draw timer
+    if time_now <= 999:
+        if time_start:
+            time_now = time() - time_start
+        pygame.draw.rect(screen, tile_color,
+                         (WINDOW_SIZE[0] * 4 / 5 - 45, top_info_size / 2 - 18, 90, 36))
+        timer = pygame.font.SysFont('arial', 29, 1).render(f'{time_now:.1f}', 1, (230, 230, 230))
+        timer_size = timer.get_size()
+        screen.blit(timer, (WINDOW_SIZE[0] * 4 / 5 - timer_size[0] / 2, top_info_size / 2 - timer_size[1] / 2))
 
     # win condition
     if MS.minecount_const == sum_of_closed_tiles:
