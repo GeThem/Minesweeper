@@ -10,7 +10,7 @@ pygame.init()
 
 pygame.display.set_caption('Minesweeper')
 # tiles configuration
-tile_size = 25
+tile_size = 26
 tile_color = (112, 146, 190)
 active_tile_color = (142, 176, 220)
 flag_img = pygame.image.load('flag.png')
@@ -33,14 +33,14 @@ tiles = tuple(tuple([x, True] for x in range(Minesweeper.columns)) for _ in rang
 numbers_colors = {
     -1: (180, 0, 0),
     0: background_color,
-    1: (0, 0, 0),
-    2: (0, 0, 0),
-    3: (0, 0, 0),
-    4: (0, 0, 0),
-    5: (0, 0, 0),
-    6: (0, 0, 0),
-    7: (0, 0, 0),
-    8: (0, 0, 0),
+    1: (65, 79, 188),
+    2: (29, 105, 0),
+    3: (170, 6, 8),
+    4: (1, 2, 128),
+    5: (123, 0, 0),
+    6: (4, 122, 125),
+    7: (176, 5, 7),
+    8: (168, 6, 15),
 }
 
 is_pressed = False
@@ -52,11 +52,14 @@ was_pressed_counter = 0
 def clear(x, y, cur_tile, status):
     '''Returns False if there's a mine'''
     if cur_tile > -1 and 1 <= status <= 2:
-        number = pygame.font.SysFont('arial', 23, 1).render(str(cur_tile), 0, numbers_colors[cur_tile])
+        number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_tile), 1, numbers_colors[cur_tile])
+        n_size = number.get_size()
         pygame.draw.rect(screen, background_color,
                          (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                           tile_size, tile_size))
-        screen.blit(number, (8 + boarder + x * (tile_size + 1), top_info_size + y * (tile_size + 1)))
+
+        print(n_size, tile_size)
+        screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1), (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
         tiles[y][x][1] = 0
         return True
     else:
@@ -71,6 +74,7 @@ for y, row in enumerate(tiles):
 
 sum_of_closed_tiles = Minesweeper.rows * Minesweeper.columns
 p_tile = 0
+counter_prev = Minesweeper.minecount_const
 while 1:
     cur_tile = ''
     # mouse position processing
@@ -148,14 +152,15 @@ while 1:
     p_tile = (mouse_pos_ind[0], mouse_pos_ind[1], tile_status)
 
     # draw mine counter
-    pygame.draw.rect(screen, tile_color,
-                     (WINDOW_SIZE[0] / 2 - 30, top_info_size / 2 - 15, 60, 30))
-    mine_count = pygame.font.SysFont('arial', 27, 1).render(str(Minesweeper.minecount), 0, (180, 50, 50))
-    mine_count_size = mine_count.get_size()
-    screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_size[0] / 2, top_info_size / 2 - mine_count_size[1] / 2))
+    if Minesweeper.minecount != counter_prev or was_pressed_counter == 0:
+        counter_prev = Minesweeper.minecount
+        pygame.draw.rect(screen, tile_color,
+                         (WINDOW_SIZE[0] / 2 - 30, top_info_size / 2 - 15, 60, 30))
+        mine_count = pygame.font.SysFont('arial', 27, 1).render(str(counter_prev), 1, (180, 50, 50))
+        mine_count_size = mine_count.get_size()
+        screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_size[0] / 2, top_info_size / 2 - mine_count_size[1] / 2))
 
     # win condition
-    print(Minesweeper.minecount_const, sum_of_closed_tiles)
     if Minesweeper.minecount_const == sum_of_closed_tiles:
         pygame.quit()
         exit()
