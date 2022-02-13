@@ -170,7 +170,7 @@ while 1:
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 3:
                 if tile_status == 4:
-                    p_tile[2] = 2
+                    tiles[p_tile[1]][p_tile[0]][1] = p_tile[2] = 2
                     pygame.draw.rect(screen, active_tile_color,
                                     (1 + boarder + p_tile[0] * (tile_size + 1),
                                     1 + top_info_size + p_tile[1] * (tile_size + 1),
@@ -178,7 +178,7 @@ while 1:
 
                     MS.minecount += 1
                 elif tile_status == 2:
-                    p_tile[2] = 4
+                    tiles[p_tile[1]][p_tile[0]][1] = p_tile[2] = 4
                     pygame.draw.rect(screen, active_tile_color,
                                     (1 + boarder + p_tile[0] * (tile_size + 1),
                                     1 + top_info_size + p_tile[1] * (tile_size + 1),
