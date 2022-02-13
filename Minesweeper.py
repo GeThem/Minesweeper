@@ -13,7 +13,7 @@ if mode == '1':
 elif mode == '2':
     rows, columns, minecount = 16, 16, 40
 else:
-    rows, columns, minecount = 9, 9, 10
+    rows, columns, minecount = 16, 30, 99
 
 matrix = [[0 for _ in range(columns)] for _ in range(rows)]
 minecount_const = minecount

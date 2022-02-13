@@ -49,17 +49,14 @@ tile_status = False
 was_pressed_counter = 0
 
 
-def clear(x, y, cur_tile):
+def clear(x, y, cur_tile, status):
     '''Returns False if there's a mine'''
-    if cur_tile > -1:
-        number = pygame.font.SysFont('arial', 23, 1).render(str(cur_tile), 0,
-                                                            numbers_colors[cur_tile])
+    if cur_tile > -1 and 1 <= status <= 2:
+        number = pygame.font.SysFont('arial', 23, 1).render(str(cur_tile), 0, numbers_colors[cur_tile])
         pygame.draw.rect(screen, background_color,
-                         (1 + boarder + x * (tile_size + 1),
-                          1 + top_info_size + y * (tile_size + 1),
+                         (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                           tile_size, tile_size))
-        screen.blit(number,
-                    (8 + boarder + x * (tile_size + 1), top_info_size + y * (tile_size + 1)))
+        screen.blit(number, (8 + boarder + x * (tile_size + 1), top_info_size + y * (tile_size + 1)))
         tiles[y][x][1] = 0
         return True
     else:
@@ -72,7 +69,7 @@ for y, row in enumerate(tiles):
                             (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                             tile_size, tile_size))
 
-sum_of_closed_tiles = 0
+sum_of_closed_tiles = Minesweeper.rows * Minesweeper.columns
 p_tile = 0
 while 1:
     cur_tile = ''
@@ -92,12 +89,12 @@ while 1:
 
     if tile_status:
         if is_pressed:
-            if tile_status == 1:
+            if tile_status in (1, 2):
                 pygame.draw.rect(screen, play_background_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
         elif was_pressed:
-            if tile_status == 1:
-                cur_tile = Minesweeper.matrix[mouse_pos_ind[1]][mouse_pos_ind[0]]
+            if tile_status in (1, 2):
                 tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 0
+                cur_tile = (mouse_pos_ind[0], mouse_pos_ind[1], 0, Minesweeper.matrix[mouse_pos_ind[1]][mouse_pos_ind[0]])
                 was_pressed_counter += 1
                 if was_pressed_counter == 1:
                     Minesweeper.no_mine = mouse_pos_ind[0], mouse_pos_ind[1]
@@ -111,11 +108,11 @@ while 1:
                 pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
                 screen.blit(flag_img, (mouse_pos[0], mouse_pos[1]))
                 tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 4
+        tile_status = tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1]
 
     # draw tiles
-    print(p_tile, (mouse_pos_ind[0], mouse_pos_ind[1]), sep='\n')
     if p_tile and p_tile[:2] != (mouse_pos_ind[0], mouse_pos_ind[1]):
-        if p_tile[2] == 2:
+        if p_tile[2] in (1, 2):
             pygame.draw.rect(screen, tile_color,
                             (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1),
                             tile_size, tile_size))
@@ -126,29 +123,27 @@ while 1:
                             tile_size, tile_size))
             screen.blit(flag_img, (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)))
             tiles[p_tile[1]][p_tile[0]][1] = 3
-    if isinstance(cur_tile, int):
-        if cur_tile == 0:
-            for choice_y in (mouse_pos_ind[1], Minesweeper.rows, 1), (Minesweeper.rows - 2, -1, -1), (1, Minesweeper.rows, 1):
+    if isinstance(cur_tile, tuple):
+        if cur_tile[3] == 0:
+            tiles[cur_tile[1]][cur_tile[0]][1] = 1
+            for choice_y in (cur_tile[1], Minesweeper.rows, 1), (Minesweeper.rows - 2, -1, -1), (1, Minesweeper.rows, 1):
                 for y_2 in range(*choice_y):
                     row_was_cleaned = 0
-                    for choice_x in (mouse_pos_ind[0], Minesweeper.columns, 1), (Minesweeper.columns-2, -1, -1), (1, Minesweeper.columns, 1):
+                    for choice_x in (cur_tile[0], Minesweeper.columns, 1), (Minesweeper.columns-2, -1, -1), (1, Minesweeper.columns, 1):
                         for x_2 in range(*choice_x):
-
-                            if 0 in (Minesweeper.matrix[y_2 - choice_y[2]][x_2],
-                                    Minesweeper.matrix[y_2][x_2 - choice_x[2]],
-                                    Minesweeper.matrix[y_2 - choice_y[2]][x_2 - choice_x[2]]):
-                                clear(x_2, y_2, Minesweeper.matrix[y_2][x_2])
+                            if clear(x_2, y_2, Minesweeper.matrix[y_2][x_2], tiles[y_2][x_2][1]):
+                                sum_of_closed_tiles -= 1
                             else:
                                 break
-
                             row_was_cleaned += 1
                     if not row_was_cleaned:
                         break
-        elif cur_tile == -1:
+        elif cur_tile[3] == -1:
             pygame.quit()
             exit()
         else:
-            clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile)
+            clear(mouse_pos_ind[0], mouse_pos_ind[1], cur_tile[3], 1)
+            sum_of_closed_tiles -= 1
 
     p_tile = (mouse_pos_ind[0], mouse_pos_ind[1], tile_status)
 
@@ -160,6 +155,7 @@ while 1:
     screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_size[0] / 2, top_info_size / 2 - mine_count_size[1] / 2))
 
     # win condition
+    print(Minesweeper.minecount_const, sum_of_closed_tiles)
     if Minesweeper.minecount_const == sum_of_closed_tiles:
         pygame.quit()
         exit()
@@ -170,23 +166,24 @@ while 1:
             exit()
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 3:
-                if tile_status:
-                    if tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] == 3:
-                        tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 1
-                        pygame.draw.rect(screen, tile_color,
-                                         (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
-                                          1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
-                                          tile_size, tile_size))
-                        screen.blit(flag_img, (
-                        1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)))
-                        Minesweeper.minecount += 1
-                    elif tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] == 1:
-                        tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 3
-                        pygame.draw.rect(screen, tile_color,
-                                         (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
-                                          1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
-                                          tile_size, tile_size))
-                        Minesweeper.minecount -= 1
+                if tile_status == 4:
+                    tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 2
+                    pygame.draw.rect(screen, active_tile_color,
+                                    (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
+                                    1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
+                                    tile_size, tile_size))
+
+                    Minesweeper.minecount += 1
+                elif tile_status == 2:
+                    tiles[mouse_pos_ind[1]][mouse_pos_ind[0]][1] = 4
+                    pygame.draw.rect(screen, active_tile_color,
+                                    (1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
+                                    1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1),
+                                    tile_size, tile_size))
+                    screen.blit(flag_img, (
+                        1 + boarder + mouse_pos_ind[0] * (tile_size + 1),
+                        1 + top_info_size + mouse_pos_ind[1] * (tile_size + 1)))
+                    Minesweeper.minecount -= 1
             else:
                 is_pressed = True
                 was_pressed = True
