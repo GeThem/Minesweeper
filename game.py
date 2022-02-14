@@ -189,7 +189,7 @@ while 1:
                     if storage:
                         x2, y2 = storage.pop()
                         sum_of_closed_tiles -= 1
-                        # checks for nums around opened empty tile
+                        # looks for closed nums around opened empty tile and opens it 
                         if x2 > 0:
                             if MS.matrix[y2][x2 - 1] != 0 and tiles[y2][x2 - 1] == 1:
                                 clear(x2 - 1, y2, 1)
