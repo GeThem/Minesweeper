@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dbc8722c-6cba-44dd-a0f4-31575a2662e5" name="Default Changelist" comment="Empty zone opening almost done">
+    <list default="true" id="dbc8722c-6cba-44dd-a0f4-31575a2662e5" name="Default Changelist" comment="&gt;-&lt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flag.png" beforeDir="false" afterPath="$PROJECT_DIR$/flag.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -237,7 +235,21 @@
       <option name="project" value="LOCAL" />
       <updated>1644847396848</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added outline">
+      <created>1644848195768</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1644848195768</updated>
+    </task>
+    <task id="LOCAL-00023" summary="&gt;-&lt;">
+      <created>1644848252115</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1644848252115</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -279,6 +291,8 @@
     <MESSAGE value="changes" />
     <MESSAGE value="-_-" />
     <MESSAGE value="Empty zone opening almost done" />
-    <option name="LAST_COMMIT_MESSAGE" value="Empty zone opening almost done" />
+    <MESSAGE value="Added outline" />
+    <MESSAGE value="&gt;-&lt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&gt;-&lt;" />
   </component>
 </project>
