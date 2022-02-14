@@ -184,11 +184,42 @@ while 1:
                     if storage:
                         x2, y2 = storage.pop()
                         sum_of_closed_tiles -= 1
+                        # checks for nums around opened empty tile
+                        if x2 > 0:
+                            if MS.matrix[y2][x2 - 1] != 0 and tiles[y2][x2 - 1] == 1:
+                                clear(x2 - 1, y2, 1)
+                                sum_of_closed_tiles -= 1
+                            if y2 > 0 and MS.matrix[y2 - 1][x2 - 1] != 0 and tiles[y2 - 1][x2 - 1] == 1:
+                                clear(x2 - 1, y2 - 1, 1)
+                                sum_of_closed_tiles -= 1
+                            if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2 - 1] != 0 and tiles[y2 + 1][x2 - 1] == 1:
+                                clear(x2 - 1, y2 + 1, 1)
+                                sum_of_closed_tiles -= 1
+
+                        if x2 < MS.columns - 1:
+                            if MS.matrix[y2][x2 + 1] != 0 and tiles[y2][x2 + 1] == 1:
+                                clear(x2 + 1, y2, 1)
+                                sum_of_closed_tiles -= 1
+                            if y2 > 0 and MS.matrix[y2 - 1][x2 + 1] != 0 and tiles[y2 - 1][x2 + 1] == 1:
+                                clear(x2 + 1, y2 - 1, 1)
+                                sum_of_closed_tiles -= 1
+                            if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2 + 1] != 0 and tiles[y2 + 1][x2 + 1] == 1:
+                                clear(x2 + 1, y2 + 1, 1)
+                                sum_of_closed_tiles -= 1
+
+                        if y2 > 0 and MS.matrix[y2 - 1][x2] != 0 and tiles[y2 - 1][x2] == 1:
+                            clear(x2, y2 - 1, 1)
+                            sum_of_closed_tiles -= 1
+                        if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2] != 0 and tiles[y2 + 1][x2] == 1:
+                            clear(x2, y2 + 1, 1)
+                            sum_of_closed_tiles -= 1
+
                         continue
                     else:
                         break
                 storage.append((x2, y2))
                 clear(x2, y2, 1)
+
         # lose
         elif cur_tile[3] == -1:
             game_is_going = 0
