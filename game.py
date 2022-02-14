@@ -87,22 +87,27 @@ def clear(x, y, status):
 
 
 def find_move(x, y):
-    if y < MS.rows - 1 and MS.matrix[y+1][x] == 0 and tiles[y+1][x] == 1:
-        return x, y+1
-    if x > 0 and MS.matrix[y][x-1] == 0 and tiles[y][x-1] == 1:
-        return x-1, y
-    if x > 0 and y < MS.rows - 1 and  MS.matrix[y+1][x-1] == 0 and tiles[y+1][x-1] == 1:
-        return x-1, y+1
+    if x > 0:
+        if MS.matrix[y][x-1] == 0 and tiles[y][x-1] == 1:
+            return x-1, y
+        if y < MS.rows - 1 and MS.matrix[y+1][x-1] == 0 and tiles[y+1][x-1] == 1:
+            return x-1, y+1
+        if y > 0 and MS.matrix[y-1][x-1] == 0 and tiles[y-1][x-1] == 1:
+            return x-1, y-1
 
+    if x < MS.columns - 1:
+        if y > 0 and  MS.matrix[y-1][x+1] == 0 and tiles[y-1][x+1] == 1:
+            return x+1, y-1
+        if MS.matrix[y][x + 1] == 0 and tiles[y][x + 1] == 1:
+            return x + 1, y
+        if y < MS.rows - 1 and MS.matrix[y+1][x+1] == 0 and tiles[y+1][x+1] == 1:
+            return x+1, y+1
+
+    if y < MS.rows - 1 and MS.matrix[y + 1][x] == 0 and tiles[y + 1][x] == 1:
+        return x, y + 1
     if y > 0 and MS.matrix[y-1][x] == 0 and tiles[y-1][x] == 1:
         return x, y - 1
-    if x < MS.columns - 1 and y > 0 and  MS.matrix[y-1][x+1] == 0 and tiles[y-1][x+1] == 1:
-        return x+1, y-1
 
-    if x < MS.columns - 1 and MS.matrix[y][x + 1] == 0 and tiles[y][x + 1] == 1:
-        return x + 1, y
-    if x < MS.columns - 1 and y < MS.rows - 1 and MS.matrix[y+1][x+1] == 0 and tiles[y+1][x+1] == 1:
-        return x+1, y+1
     return -1, -1
 
 
