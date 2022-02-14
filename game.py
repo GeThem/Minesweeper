@@ -56,7 +56,17 @@ was_pressed = False
 was_pressed_counter = 0
 
 
-def clear(x, y, status):
+def open(x, y, status):
+    """
+    Opens a tile
+
+    status variations:
+    1-2: doesn't open mines
+    3: open everything
+    4: open evertyhing for flags
+    7: diactivate closed tile with mine
+    8: diactivate closed flagged tile
+    """
     if 1 <= status <= 4:
         coords = 1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)
         cur_elem = MS.matrix[y][x]
@@ -88,6 +98,7 @@ def clear(x, y, status):
 
 
 def find_move(x, y):
+    """Finds closed empty tile around tile[y][x]"""
     if x > 0:
         if MS.matrix[y][x - 1] == 0 and tiles[y][x - 1] == 1:
             return x - 1, y
@@ -148,10 +159,10 @@ while 1:
         elif was_pressed:
             if tile_status in (1, 2):
                 tiles[cur_tile[1]][cur_tile[0]] = 0
-                pressed_tile = (cur_tile[0], cur_tile[1], 0, MS.matrix[cur_tile[1]][cur_tile[0]])
+                pressed_tile = (*cur_tile, 0, MS.matrix[cur_tile[1]][cur_tile[0]])
                 was_pressed_counter += 1
                 if was_pressed_counter == 1:
-                    MS.no_mine = cur_tile[0], cur_tile[1]
+                    MS.no_mine = cur_tile
                     MS.generate()
                     time_start = time()
             was_pressed = False
@@ -175,6 +186,7 @@ while 1:
             screen.blit(flag_img,
                         (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)))
             tiles[p_tile[1]][p_tile[0]] = 5
+
     # if right button was released on closed tile, draw numbers
     if isinstance(pressed_tile, tuple):
         if pressed_tile[3] == 0:
@@ -186,54 +198,53 @@ while 1:
                     if storage:
                         x2, y2 = storage.pop()
                         sum_of_closed_tiles -= 1
-                        # looks for closed nums around opened empty tile and opens it 
+
+                        # looks for closed nums around opened empty tile and opens it
                         if x2 > 0:
                             if MS.matrix[y2][x2 - 1] != 0 and tiles[y2][x2 - 1] == 1:
-                                clear(x2 - 1, y2, 1)
+                                open(x2 - 1, y2, 1)
                                 sum_of_closed_tiles -= 1
                             if y2 > 0 and MS.matrix[y2 - 1][x2 - 1] != 0 and tiles[y2 - 1][x2 - 1] == 1:
-                                clear(x2 - 1, y2 - 1, 1)
+                                open(x2 - 1, y2 - 1, 1)
                                 sum_of_closed_tiles -= 1
                             if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2 - 1] != 0 and tiles[y2 + 1][x2 - 1] == 1:
-                                clear(x2 - 1, y2 + 1, 1)
+                                open(x2 - 1, y2 + 1, 1)
                                 sum_of_closed_tiles -= 1
-
                         if x2 < MS.columns - 1:
                             if MS.matrix[y2][x2 + 1] != 0 and tiles[y2][x2 + 1] == 1:
-                                clear(x2 + 1, y2, 1)
+                                open(x2 + 1, y2, 1)
                                 sum_of_closed_tiles -= 1
                             if y2 > 0 and MS.matrix[y2 - 1][x2 + 1] != 0 and tiles[y2 - 1][x2 + 1] == 1:
-                                clear(x2 + 1, y2 - 1, 1)
+                                open(x2 + 1, y2 - 1, 1)
                                 sum_of_closed_tiles -= 1
                             if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2 + 1] != 0 and tiles[y2 + 1][x2 + 1] == 1:
-                                clear(x2 + 1, y2 + 1, 1)
+                                open(x2 + 1, y2 + 1, 1)
                                 sum_of_closed_tiles -= 1
-
                         if y2 > 0 and MS.matrix[y2 - 1][x2] != 0 and tiles[y2 - 1][x2] == 1:
-                            clear(x2, y2 - 1, 1)
+                            open(x2, y2 - 1, 1)
                             sum_of_closed_tiles -= 1
                         if y2 < MS.rows - 1 and MS.matrix[y2 + 1][x2] != 0 and tiles[y2 + 1][x2] == 1:
-                            clear(x2, y2 + 1, 1)
+                            open(x2, y2 + 1, 1)
                             sum_of_closed_tiles -= 1
 
                         continue
                     else:
                         break
                 storage.append((x2, y2))
-                clear(x2, y2, 1)
+                open(x2, y2, 1)
 
         # lose
         elif pressed_tile[3] == -1:
             game_is_going = 0
-            clear(pressed_tile[0], pressed_tile[1], 3)
+            open(pressed_tile[0], pressed_tile[1], 3)
             for y, row in enumerate(tiles):
                 for x, status in enumerate(row):
                     if 1 <= status <= 2:
-                        clear(x, y, 3)
+                        open(x, y, 3)
                     if 5 <= status <= 6:
-                        clear(x, y, 4)
+                        open(x, y, 4)
         else:
-            clear(pressed_tile[0], pressed_tile[1], 1)
+            open(pressed_tile[0], pressed_tile[1], 1)
             sum_of_closed_tiles -= 1
 
     p_tile = [cur_tile[0], cur_tile[1], tile_status]
@@ -262,19 +273,20 @@ while 1:
     if MS.minecount_const == sum_of_closed_tiles and game_is_going:
         game_is_going = 0
         MS.minecount = 0
-        clear(pressed_tile[0], pressed_tile[1], pressed_tile[2])
+        open(pressed_tile[0], pressed_tile[1], pressed_tile[2])
         for y, row in enumerate(tiles):
             for x, status in enumerate(row):
                 if status == 1:
-                    clear(x, y, 7)
+                    open(x, y, 7)
                 elif status == 5:
-                    clear(x, y, 8)
+                    open(x, y, 8)
 
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             exit()
         if event.type == MOUSEBUTTONDOWN:
+
             # flag actions
             if event.button == 3:
                 if tile_status == 6:
