@@ -123,8 +123,9 @@ while 1:
     cur_tile = ''
     # mouse position processing
     mouse_pos = list(pygame.mouse.get_pos())
-    mouse_pos_ind = [0, 0]
+    mouse_pos_ind = [-1, -1]
     if boarder+1 < mouse_pos[0] < WINDOW_SIZE[0]-1-boarder and 1+top_info_size < mouse_pos[1] < WINDOW_SIZE[1]-1-boarder:
+
         mouse_pos_ind[0] = (mouse_pos[0] - boarder - 1) // (tile_size + 1)
         mouse_pos_ind[1] = (mouse_pos[1] - top_info_size - 1) // (tile_size + 1)
 
