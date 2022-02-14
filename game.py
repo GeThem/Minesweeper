@@ -59,7 +59,6 @@ was_pressed_counter = 0
 
 
 def clear(x, y, status):
-    '''Returns False if there's a mine'''
     if 1 <= status <= 4:
         cur_elem = MS.matrix[y][x]
         pygame.draw.rect(screen, open_tile_color,
