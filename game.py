@@ -173,9 +173,6 @@ while 1:
     # if right button was released on closed tile, draw numbers
     if isinstance(cur_tile, tuple):
         if cur_tile[3] == 0:
-            clear(cur_tile[0], cur_tile[1], 1)
-            sum_of_closed_tiles -= 1
-
             x2, y2 = cur_tile[:2]
             storage = [(x2, y2)]
             while 0 <= x2 <= MS.columns - 1 and 0 <= y2 <= MS.rows - 1:
