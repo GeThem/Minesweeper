@@ -180,12 +180,12 @@ while 1:
                 if x2 == -1:
                     if storage:
                         x2, y2 = storage.pop()
+                        sum_of_closed_tiles -= 1
                         continue
                     else:
                         break
                 storage.append((x2, y2))
                 clear(x2, y2, 1)
-                sum_of_closed_tiles -= 1
         # lose condition
         elif cur_tile[3] == -1:
             game_is_going = 0
