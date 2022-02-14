@@ -28,7 +28,7 @@ def generate():
         if 0 <= x_gr < columns and 0 <= y_gr < rows:
             mines.pop(mines.index((x_gr, y_gr)))
 
-    for _ in range(minecount):
+    for _ in range(minecount_const):
         mine_x, mine_y = mines.pop(randrange(len(mines)))
         matrix[mine_y][mine_x] = -1
         for row, column in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
