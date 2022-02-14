@@ -30,7 +30,6 @@ no_mine_img = pygame.transform.scale(no_mine_img, (tile_size, tile_size))
 
 
 numbers_colors = {
-    0: open_tile_color,
     1: (65, 79, 188),
     2: (29, 105, 0),
     3: (170, 6, 8),
@@ -63,14 +62,14 @@ def clear(x, y, status):
         pygame.draw.rect(screen, open_tile_color,
                          (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                           tile_size, tile_size))
-        if cur_elem > -1 and 1 <= status <= 2:
+        if cur_elem > 0 and 1 <= status <= 2:
             number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_elem), 1, numbers_colors[cur_elem])
             n_size = number.get_size()
             screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1), (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
         elif status == 3:
             if cur_elem == -1:
                 screen.blit(mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
-            else:
+            elif cur_elem:
                 number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_elem), 1, numbers_colors[cur_elem])
                 n_size = number.get_size()
                 screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1), (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
@@ -85,6 +84,7 @@ def clear(x, y, status):
         if status == 7:
             screen.blit(mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
         tiles[y][x] = 0
+
 
 def find_move(x, y):
     if y < MS.rows - 1 and MS.matrix[y+1][x] == 0 and tiles[y+1][x] == 1:
