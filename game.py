@@ -2,10 +2,9 @@ import Minesweeper as MS
 import pygame
 from sys import exit
 from time import time
+from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 
 clock = pygame.time.Clock()
-
-from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 
 pygame.init()
 
@@ -82,7 +81,10 @@ def clear(x, y, status):
             else:
                 screen.blit(no_mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
         tiles[y][x] = 0
-
+    elif 7 <= status <= 8:
+        if status == 7:
+            screen.blit(mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
+        tiles[y][x] = 0
 
 def find_move(x, y):
     if y < MS.rows - 1 and MS.matrix[y+1][x] == 0 and tiles[y+1][x] == 1:
@@ -186,7 +188,7 @@ while 1:
                         break
                 storage.append((x2, y2))
                 clear(x2, y2, 1)
-        # lose condition
+        # lose
         elif cur_tile[3] == -1:
             game_is_going = 0
             clear(cur_tile[0], cur_tile[1], 3)
@@ -221,10 +223,17 @@ while 1:
         timer_size = timer.get_size()
         screen.blit(timer, (WINDOW_SIZE[0] * 4 / 5 - timer_size[0] / 2, top_info_size / 2 - timer_size[1] / 2))
 
-    # win condition
+    # win
     if MS.minecount_const == sum_of_closed_tiles and game_is_going:
         game_is_going = 0
+        MS.minecount = 0
         clear(cur_tile[0], cur_tile[1], cur_tile[2])
+        for y, row in enumerate(tiles):
+            for x, status in enumerate(row):
+                if status == 1:
+                    clear(x, y, 7)
+                elif status == 5:
+                    clear(x, y, 8)
 
     for event in pygame.event.get():
         if event.type == QUIT:
