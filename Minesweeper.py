@@ -17,11 +17,12 @@ else:
 
 matrix = [[0 for _ in range(columns)] for _ in range(rows)]
 minecount_const = minecount
-mines = [(x, y) for x in range(columns) for y in range(rows)]
 no_mine = ()
 
 
 def generate():
+    mines = [(x, y) for x in range(columns) for y in range(rows)]
+
     for x, y in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
         y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
         if 0 <= x_gr < columns and 0 <= y_gr < rows:
