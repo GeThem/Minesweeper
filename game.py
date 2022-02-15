@@ -94,10 +94,10 @@ nums = {
 }
 nums['size'] = nums[1].get_size()
 
-# ----------------------------------------------GAME-------------------------------------------------------- #
+# -------------------------------------------MAIN MENU------------------------------------------------------ #
 
 
-def mode_menu():
+def main_menu():
     global rows, columns, minecount
     pygame.display.set_caption('Mode selection')
     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
@@ -147,7 +147,10 @@ def mode_menu():
         pygame.display.update()
         clock.tick(60)
 
-
+        
+# -------------------------------------------GAME EXECUTION------------------------------------------------------ #
+        
+        
 def game():
     global no_mine, matrix, minecount
     # window size
@@ -436,4 +439,4 @@ def game():
         pygame.display.update()
         clock.tick(60)
 
-mode_menu()
+main_menu()
