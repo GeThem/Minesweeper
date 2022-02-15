@@ -1,4 +1,3 @@
-import Minesweeper as MS
 import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from sys import exit
