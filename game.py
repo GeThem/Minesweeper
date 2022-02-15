@@ -74,11 +74,11 @@ tile_color = (112, 146, 190)
 active_tile_color = (142, 176, 220)
 open_tile_color = (191, 204, 215)
 # images
-flag_img = pygame.image.load('flag.png')
+flag_img = pygame.image.load('data\\images\\flag.png')
 flag_img = pygame.transform.scale(flag_img, (tile_size, tile_size))
-mine_img = pygame.image.load('mine.png')
+mine_img = pygame.image.load('data\\images\\mine.png')
 mine_img = pygame.transform.scale(mine_img, (tile_size, tile_size))
-no_mine_img = pygame.image.load('no_mine.png')
+no_mine_img = pygame.image.load('data\\images\\no_mine.png')
 no_mine_img = pygame.transform.scale(no_mine_img, (tile_size, tile_size))
 
 nums = {
