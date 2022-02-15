@@ -61,22 +61,17 @@ def open(x, y, status):
     Opens a tile
 
     status variations:
-    1-2: doesn't open mines
-    3: open everything
-    4: open evertyhing for flags
-    7: diactivate closed tile with mine
-    8: diactivate closed flagged tile
+        1-3: open everything
+        for the end of a game:
+            4: for opening flag tiles
+            7: diactivate closed tile with mine
+            8: diactivate closed flagged tile
     """
     if 1 <= status <= 4:
         coords = 1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)
         cur_elem = MS.matrix[y][x]
         pygame.draw.rect(screen, open_tile_color, (*coords, tile_size, tile_size))
-        if cur_elem > 0 and 1 <= status <= 2:
-            number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_elem), 1, numbers_colors[cur_elem])
-            n_size = number.get_size()
-            screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1),
-                                 (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
-        elif status == 3:
+        if 1 <= status <= 3:
             if cur_elem == -1:
                 screen.blit(mine_img, (*coords, tile_size, tile_size))
             elif cur_elem:
