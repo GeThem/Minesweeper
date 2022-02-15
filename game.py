@@ -28,16 +28,19 @@ mine_img = pygame.transform.scale(mine_img, (tile_size, tile_size))
 no_mine_img = pygame.image.load('no_mine.png')
 no_mine_img = pygame.transform.scale(no_mine_img, (tile_size, tile_size))
 
-numbers_colors = {
-    1: (65, 79, 188),
-    2: (29, 105, 0),
-    3: (170, 6, 8),
-    4: (1, 2, 128),
-    5: (123, 0, 0),
-    6: (4, 122, 125),
-    7: (176, 5, 7),
-    8: (168, 6, 15),
+nums = {
+    1: pygame.font.SysFont('miriam', tile_size, 1).render('1', 1, (65, 79, 188)),
+    2: pygame.font.SysFont('miriam', tile_size, 1).render('2', 1, (29, 105, 0)),
+    3: pygame.font.SysFont('miriam', tile_size, 1).render('3', 1, (170, 6, 8)),
+    4: pygame.font.SysFont('miriam', tile_size, 1).render('4', 1, (1, 2, 128)),
+    5: pygame.font.SysFont('miriam', tile_size, 1).render('5', 1, (123, 0, 0)),
+    6: pygame.font.SysFont('miriam', tile_size, 1).render('6', 1, (4, 122, 125)),
+    7: pygame.font.SysFont('miriam', tile_size, 1).render('7', 1, (176, 5, 7)),
+    8: pygame.font.SysFont('miriam', tile_size, 1).render('8', 1, (168, 6, 15)),
+    'size': 0
 }
+nums['size'] = nums[1].get_size()
+
 
 # window size
 boarder = 30
@@ -75,10 +78,8 @@ def open(x, y, status):
             if cur_elem == -1:
                 screen.blit(mine_img, (*coords, tile_size, tile_size))
             elif cur_elem:
-                number = pygame.font.SysFont('miriam', tile_size, 1).render(str(cur_elem), 1, numbers_colors[cur_elem])
-                n_size = number.get_size()
-                screen.blit(number, ((tile_size - n_size[0]) / 2 + 2 + boarder + x * (tile_size + 1),
-                                     (tile_size - n_size[1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
+                screen.blit(nums[cur_elem], ((tile_size - nums['size'][0]) / 2 + 2 + boarder + x * (tile_size + 1),
+                                     (tile_size - nums['size'][1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
         elif status == 4:
             if cur_elem == -1:
                 screen.blit(mine_img, (*coords, tile_size, tile_size))
@@ -187,7 +188,7 @@ while 1:
         if pressed_tile[3] == 0:
             x2, y2 = pressed_tile[:2]
             storage = [(x2, y2)]
-            while 0 <= x2 <= MS.columns - 1 and 0 <= y2 <= MS.rows - 1:
+            while 0 <= x2 < MS.columns and 0 <= y2 < MS.rows:
                 x2, y2 = find_move(x2, y2)
                 if x2 == -1:
                     if storage:
@@ -223,8 +224,7 @@ while 1:
                             sum_of_closed_tiles -= 1
 
                         continue
-                    else:
-                        break
+                    break
                 storage.append((x2, y2))
                 open(x2, y2, 1)
 
