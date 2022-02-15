@@ -12,7 +12,6 @@ pygame.display.set_caption('Minesweeper')
 
 # background colors
 behind_tiles_color = (235, 235, 235)
-background_color = (191, 196, 199)
 # tiles configuration
 tile_size = 30
 tile_color = (112, 146, 190)
@@ -49,7 +48,7 @@ WINDOW_SIZE = (1 + 2 * boarder + MS.columns * (tile_size + 1),
                1 + boarder + top_info_size + MS.rows * (tile_size + 1))
 # screen design
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
-screen.fill(background_color)
+screen.fill(MS.background_color)
 pygame.draw.rect(screen, behind_tiles_color,
                  (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6,
                   WINDOW_SIZE[1] - top_info_size - boarder + 6))
@@ -299,5 +298,6 @@ while 1:
         elif event.type == MOUSEBUTTONUP and event.button == 1:
             is_pressed = False
             was_pressed = tile_status
+
     pygame.display.update()
     clock.tick(60)
