@@ -3,6 +3,7 @@ from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from sys import exit
 from time import time
 from random import randrange
+from os.path import join as join_path
 
 clock = pygame.time.Clock()
 
@@ -71,9 +72,10 @@ tile_color = (102, 146, 233)
 active_tile_color = (142, 176, 220)
 open_tile_color = (191, 204, 225)
 # images
-flag_img = pygame.image.load('data\\images\\flag.png')
-mine_img = pygame.image.load('data\\images\\mine.png')
-no_mine_img = pygame.image.load('data\\images\\no_mine.png')
+path = 'data/images'
+flag_img = pygame.image.load(join_path(path, 'flag.png'))
+mine_img = pygame.image.load(join_path(path, 'mine.png'))
+no_mine_img = pygame.image.load(join_path(path, 'no_mine.png'))
 
 go_to_menu = pygame.image.load('data\\images\\go_to_menu.png')
 go_to_menu_activated = go_to_menu.copy()
