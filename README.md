@@ -3,9 +3,9 @@ Why am I writting this? It's not like I'm doing an innovative project that world
 ## My first time making a game
 Trying out pygame, i'm more than sure that coding could be done better >_<
 
-Not done yet, ***BUT!***
+***Is done!***
 
-## Updates:
+## Updates
 
 ### Playable already, just start game.py via python (pygame required ofc)
 Also optimised a lot, especially compared to version in the main branch lol
@@ -13,8 +13,10 @@ Also optimised a lot, especially compared to version in the main branch lol
 ### Restart and mode choosing features
 I hope it'll work well
 
+### Some design changes
+Added a bozo just for him to be there <img src="https://cdn.discordapp.com/emojis/932792945059459122.webp?size=32&amp;quality=lossless">
 
-## P. S.
+## P. S. (Author's note lol)
 ### Turns out having all code in one file is more effective
 Or maybe the problem is that i don't really know much about how pygame works.
 
