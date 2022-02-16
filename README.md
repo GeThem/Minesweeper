@@ -5,6 +5,8 @@ Trying out pygame, i'm more than sure that coding could be done better >_<
 
 ***Is done!***
 
+![screen](https://user-images.githubusercontent.com/99418179/154303335-75fb0463-4b1d-4256-b9f4-b760059a548b.png)
+
 ## Updates
 
 ### Playable already, just start game.py via python (pygame required ofc)
