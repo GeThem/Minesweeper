@@ -126,7 +126,8 @@ def main_menu():
                         rows, columns, minecount = 16, 16, 40
                     else:
                         rows, columns, minecount = 16, 30, 99
-                    game()
+                    while game():
+                        pass
                     was_pressed = False
                     pygame.display.set_caption('Mode selection')
                     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
@@ -253,8 +254,7 @@ def game():
     game_is_going = 1
     restart_button = pygame.Rect(WINDOW_SIZE[0] // 7, top_info_size // 6, top_info_size - top_info_size // 3,
                                  top_info_size - top_info_size // 3)
-    running = 1
-    while running:
+    while 1:
         pygame.draw.rect(screen, (100, 100, 100), restart_button)
 
         pressed_tile = 0
@@ -278,8 +278,7 @@ def game():
                 pygame.draw.rect(screen, (50, 50, 50), restart_button)
                 was_pressed_normal = True
             elif was_pressed_normal:
-                running = 0
-                was_pressed_normal = False
+                return False
         elif was_pressed_normal:
             was_pressed_normal = False
 
