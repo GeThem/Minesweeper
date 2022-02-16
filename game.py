@@ -9,16 +9,15 @@ clock = pygame.time.Clock()
 pygame.init()
 
 # ------------------------------------------PLAYGROUND GENERATION------------------------------------------- #
-
 matrix = []  # creates in game.py
-rows, columns, minecount = 0, 0, 0
-no_mine = ()
 
 
-def generate():
+def generate(rows, columns, minecount, no_mine):
+    global matrix
+    matrix = [[0] * columns for _ in range(rows)]
     mines = [(x, y) for x in range(columns) for y in range(rows)]
 
-    for x, y in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
+    for x, y in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
         y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
         if 0 <= x_gr < columns and 0 <= y_gr < rows:
             mines.pop(mines.index((x_gr, y_gr)))
@@ -26,28 +25,29 @@ def generate():
     for _ in range(minecount):
         mine_x, mine_y = mines.pop(randrange(len(mines)))
         matrix[mine_y][mine_x] = -1
-        for row, column in ((x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)):
+        for row, column in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
             y_gr, x_gr = mine_y + row, mine_x + column
             if 0 <= x_gr < columns and 0 <= y_gr < rows and matrix[y_gr][x_gr] != -1:
                 matrix[y_gr][x_gr] += 1
 
+    print(no_mine)
     print(*(" ".join(map(str, line)).replace('0', '.').replace('-1', '*') for line in matrix), sep='\n')
 
-# ------------------------------------------MODE MENU VARIABLES--------------------------------------------- #
 
+# ------------------------------------------MODE MENU VARIABLES--------------------------------------------- #
 WINDOW_SIZE_options = (500, 300)
 win_half = WINDOW_SIZE_options[0] // 2
 win_div_4 = WINDOW_SIZE_options[1] // 4
 
-background_color = (191, 196, 199)
+background_color = (191, 196, 205)
 
 buttons_text = {
-        0: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (0, 0, 0)),
-        1: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (0, 0, 0)),
-        2: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (0, 0, 0)),
-        10: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (80, 80, 80)),
-        11: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (80, 80, 80)),
-        12: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (80, 80, 80)),
+        0: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (70, 70, 70)),
+        1: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (70, 70, 70)),
+        2: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (70, 70, 70)),
+        10: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (230, 230, 230)),
+        11: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (230, 230, 230)),
+        12: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (230, 230, 230)),
     }
 _, text_y = buttons_text[1].get_size()
 button_x, button_y = win_div_4, win_div_4 * 2 // 3
@@ -65,21 +65,28 @@ buttons = (
 )
 
 # ----------------------------------------------GAME VARIABLES------------------------------------------------- #
-
 # background colors
-behind_tiles_color = (235, 235, 235)
+behind_tiles_color = (225, 225, 225)
+buttons_color = (210, 220, 220)
 # tiles configuration
-tile_size = int(pygame.display.Info().current_h / 30)
-tile_color = (112, 146, 190)
+tile_size = 34
+tile_color = (102, 146, 233)
 active_tile_color = (142, 176, 220)
-open_tile_color = (191, 204, 215)
+open_tile_color = (191, 204, 225)
 # images
 flag_img = pygame.image.load('data\\images\\flag.png')
-flag_img = pygame.transform.scale(flag_img, (tile_size, tile_size))
 mine_img = pygame.image.load('data\\images\\mine.png')
-mine_img = pygame.transform.scale(mine_img, (tile_size, tile_size))
 no_mine_img = pygame.image.load('data\\images\\no_mine.png')
-no_mine_img = pygame.transform.scale(no_mine_img, (tile_size, tile_size))
+
+go_to_menu = pygame.image.load('data\\images\\go_to_menu.png')
+go_to_menu_activated = go_to_menu.copy()
+go_to_menu_activated.set_alpha(200)
+
+beybo = pygame.image.load('data\\images\\beybo.png')
+re_press = pygame.image.load('data\\images\\r_button_pressed.png')
+oh_no = pygame.image.load('data\\images\\oh_no.png')
+static = pygame.image.load('data\\images\\static.png')
+win = pygame.image.load('data\\images\\win.png')
 
 nums = {
     1: pygame.font.SysFont('miriam', tile_size, 1).render('1', 1, (65, 79, 188)),
@@ -94,12 +101,11 @@ nums = {
 }
 nums['size'] = nums[1].get_size()
 
+
 # -------------------------------------------MAIN MENU------------------------------------------------------ #
-
-
 def main_menu():
-    global rows, columns, minecount
-    pygame.display.set_caption('Mode selection')
+    pygame.display.set_caption('Minesweeper: Mode selection')
+    pygame.display.set_icon(pygame.image.load("data\\images\\mine.png"))
     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
     screen.fill(background_color)
     was_pressed = 0
@@ -108,7 +114,7 @@ def main_menu():
         on_button = 0
 
         for button in buttons:
-            pygame.draw.rect(screen, (100, 100, 100), button[1])
+            pygame.draw.rect(screen, (150, 150, 150), button[1])
             screen.blit(*button[0])
 
         mouse_pos = pygame.mouse.get_pos()
@@ -117,7 +123,7 @@ def main_menu():
             if on_button := button[1].collidepoint(*mouse_pos):
                 mode = i
                 if is_pressed:
-                    pygame.draw.rect(screen, (150, 150, 150), buttons[mode][1])
+                    pygame.draw.rect(screen, (100, 100, 100), buttons[mode][1])
                     screen.blit(buttons_text[mode + 10], buttons[mode][0][1])
                 elif was_pressed:
                     if mode == 0:
@@ -126,10 +132,12 @@ def main_menu():
                         rows, columns, minecount = 16, 16, 40
                     else:
                         rows, columns, minecount = 16, 30, 99
-                    while game():
+
+                    while game(rows, columns, minecount):
                         pass
+
                     was_pressed = False
-                    pygame.display.set_caption('Mode selection')
+                    pygame.display.set_caption('Minesweeper: Mode selection')
                     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
                     screen.fill(background_color)
                 break
@@ -148,12 +156,10 @@ def main_menu():
         pygame.display.update()
         clock.tick(60)
 
-        
+
 # -------------------------------------------GAME EXECUTION------------------------------------------------------ #
-        
-        
-def game():
-    global no_mine, matrix, minecount
+def game(rows, columns, minecount):
+    global beybo, re_press
     # window size
     boarder = 30
     top_info_size = 80
@@ -165,9 +171,12 @@ def game():
     pygame.display.set_caption('Minesweeper')
     screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
     screen.fill(background_color)
+    pygame.draw.rect(screen, (80, 80, 80),
+                     (boarder - 2, top_info_size - 2, WINDOW_SIZE[0] - 2 * boarder + 4,
+                      WINDOW_SIZE[1] - top_info_size - boarder + 4))
     pygame.draw.rect(screen, behind_tiles_color,
-                     (boarder - 3, top_info_size - 3, WINDOW_SIZE[0] - 2 * boarder + 6,
-                      WINDOW_SIZE[1] - top_info_size - boarder + 6))
+                     (boarder, top_info_size, WINDOW_SIZE[0] - 2 * boarder,
+                      WINDOW_SIZE[1] - top_info_size - boarder))
 
     tiles = tuple([1] * columns for _ in range(rows))
     tile_status = 0  # 0 - closed tile/mouse out of screen, 1 - closed, 2 - closed active, 5 - flagged, 6 - flagged active
@@ -177,7 +186,6 @@ def game():
     was_pressed = False
     was_pressed_counter = 0
     was_pressed_normal = False
-
 
     def open(x, y, status):
         """
@@ -212,7 +220,6 @@ def game():
                 screen.blit(mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
             tiles[y][x] = 0
 
-
     def find_move(x, y):
         """Finds closed empty tile around tile[y][x]"""
         if x > 0:
@@ -238,7 +245,6 @@ def game():
 
         return -1, -1
 
-
     # draw closed tiles
     for y in range(rows):
         for x in range(columns):
@@ -252,12 +258,29 @@ def game():
     p_tile = 0
     counter_prev = minecount_const
     game_is_going = 1
-    restart_button = pygame.Rect(WINDOW_SIZE[0] // 7, top_info_size // 6, top_info_size - top_info_size // 3,
-                                 top_info_size - top_info_size // 3)
-    while 1:
-        pygame.draw.rect(screen, (100, 100, 100), restart_button)
 
+    restart_button = pygame.Rect(77, 13, 54, 54)
+    menu_button = pygame.Rect(boarder - 1, 13, 40, 54)
+    # minecounter and timer outline
+    pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] / 2 - 31, top_info_size / 2 - 25, 62, 48))
+    pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] * 4 / 5 - 37, top_info_size / 2 - 19, 74, 38))
+
+    pygame.draw.rect(screen, (100, 100, 100), menu_button)
+    pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
+    screen.blit(go_to_menu, menu_button)
+    while 1:
         pressed_tile = 0
+
+        pygame.draw.rect(screen, (100, 100, 100), (77, 13, 54, 54))
+        pygame.draw.rect(screen, buttons_color, (77, 13, 53, 53))
+
+        if game_is_going:
+            screen.blit(static, restart_button)
+        elif lose:
+            screen.blit(beybo, restart_button)
+        else:
+            screen.blit(win, restart_button)
+
         # mouse position processing
         mouse_pos = list(pygame.mouse.get_pos())
         cur_tile = [-1, -1]
@@ -272,31 +295,45 @@ def game():
         else:
             tile_status = 0
 
-        # restart game
+        # buttons
         if restart_button.collidepoint(*mouse_pos):
             if is_pressed:
-                pygame.draw.rect(screen, (50, 50, 50), restart_button)
+                pygame.draw.rect(screen, (100, 100, 100), (77, 13, 54, 54))
+                pygame.draw.rect(screen, (180, 180, 180), (78, 14, 53, 53))
+                screen.blit(re_press, restart_button)
+                was_pressed_normal = True
+            elif was_pressed_normal:
+                return True
+        elif menu_button.collidepoint(*mouse_pos):
+            if is_pressed:
+                pygame.draw.rect(screen, (100, 100, 100), menu_button)
+                pygame.draw.rect(screen, (180, 180, 180), (boarder, 14, 39, 53))
+                screen.blit(go_to_menu_activated, menu_button)
                 was_pressed_normal = True
             elif was_pressed_normal:
                 return False
         elif was_pressed_normal:
+            pygame.draw.rect(screen, (100, 100, 100), menu_button)
+            pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
+            screen.blit(go_to_menu, menu_button)
             was_pressed_normal = False
 
         if tile_status:
             if is_pressed:
                 if tile_status in (1, 2):
+                    pygame.draw.rect(screen, buttons_color, (77, 13, 53, 53))
+                    screen.blit(oh_no, restart_button)
                     pygame.draw.rect(screen, open_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
             elif was_pressed:
                 if tile_status in (1, 2):
                     if was_pressed_counter == 0:
-                        no_mine = cur_tile
-                        matrix = [[0] * columns for _ in range(rows)]
-                        generate()
+                        generate(rows, columns, minecount_const, cur_tile)
                         time_start = time()
                         was_pressed_counter += 1
                     pressed_tile = (*cur_tile, 0, matrix[cur_tile[1]][cur_tile[0]])
                     tiles[cur_tile[1]][cur_tile[0]] = 0
                 was_pressed = False
+
             else:
                 if tile_status == 1:
                     pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
@@ -322,6 +359,7 @@ def game():
         if isinstance(pressed_tile, tuple):
             if pressed_tile[3] == 0:
                 x2, y2 = pressed_tile[:2]
+                open(x2, y2, 1)
                 storage = [(x2, y2)]
                 while 0 <= x2 < columns and 0 <= y2 < rows:
                     x2, y2 = find_move(x2, y2)
@@ -365,6 +403,7 @@ def game():
 
             # lose
             elif pressed_tile[3] == -1:
+                lose = 1
                 game_is_going = 0
                 open(pressed_tile[0], pressed_tile[1], 3)
                 for y, row in enumerate(tiles):
@@ -383,9 +422,10 @@ def game():
         # draw mine counter
         if minecount != counter_prev or was_pressed_counter == 0:
             counter_prev = minecount
-            pygame.draw.rect(screen, tile_color,
+            pygame.draw.rect(screen, active_tile_color,
                              (WINDOW_SIZE[0] / 2 - 30, top_info_size / 2 - 24, 60, 46))
-            mine_count = pygame.font.SysFont('arial', 37, 1).render(str(counter_prev), 1, (150, 2, 2))
+
+            mine_count = pygame.font.SysFont('arial', 37, 1).render(str(counter_prev), 1, (180, 0, 0))
             mine_count_sz = mine_count.get_size()
             screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_sz[0] / 2, top_info_size / 2 - mine_count_sz[1] / 2))
 
@@ -393,7 +433,7 @@ def game():
         if time_now <= 999 and game_is_going:
             if time_start:
                 time_now = time() - time_start
-            pygame.draw.rect(screen, tile_color,
+            pygame.draw.rect(screen, active_tile_color,
                              (WINDOW_SIZE[0] * 4 / 5 - 36, top_info_size / 2 - 18, 72, 36))
             timer = pygame.font.SysFont('arial', 29, 1).render(f'{time_now:.1f}', 1, (230, 230, 230))
             timer_size = timer.get_size()
@@ -401,6 +441,7 @@ def game():
 
         # win
         if minecount_const == sum_of_closed_tiles and game_is_going:
+            lose = 0
             game_is_going = 0
             minecount = 0
             open(pressed_tile[0], pressed_tile[1], pressed_tile[2])
@@ -437,5 +478,6 @@ def game():
 
         pygame.display.update()
         clock.tick(60)
+
 
 main_menu()
