@@ -18,6 +18,9 @@ I hope it'll work well
 ### Some design changes
 Added a bozo just for him to be there <img src="https://cdn.discordapp.com/emojis/932792945059459122.webp?size=32&amp;quality=lossless">
 
+### Added .exe file
+Now can be started without python neiter pygame, I think this is the end, the game is done
+
 ## P. S. (Author's note lol)
 ### Turns out having all code in one file is more effective
 Or maybe the problem is that i don't really know much about how pygame works.
