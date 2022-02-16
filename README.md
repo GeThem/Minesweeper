@@ -5,7 +5,8 @@ Trying out pygame, i'm more than sure that coding could be done better >_<
 
 ***Is done!***
 
-![screen](https://user-images.githubusercontent.com/99418179/154303335-75fb0463-4b1d-4256-b9f4-b760059a548b.png)
+![GIF](https://user-images.githubusercontent.com/99418179/154314654-47b77547-6989-4634-9b50-f9b8b5903a3a.gif)
+
 
 ## Updates
 
