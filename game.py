@@ -30,9 +30,6 @@ def generate(rows, columns, minecount, no_mine):
             if 0 <= x_gr < columns and 0 <= y_gr < rows and matrix[y_gr][x_gr] != -1:
                 matrix[y_gr][x_gr] += 1
 
-    print(no_mine)
-    print(*(" ".join(map(str, line)).replace('0', '.').replace('-1', '*') for line in matrix), sep='\n')
-
 
 # ------------------------------------------MODE MENU VARIABLES--------------------------------------------- #
 WINDOW_SIZE_options = (500, 300)
