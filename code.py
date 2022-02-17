@@ -72,7 +72,7 @@ tile_color = (102, 146, 233)
 active_tile_color = (142, 176, 220)
 open_tile_color = (191, 204, 225)
 # images
-path_imgs = join_path('data', 'images')
+path_imgs = 'data/images'
 flag_img = pygame.image.load(join_path(path_imgs, 'flag.png'))
 mine_img = pygame.image.load(join_path(path_imgs, 'mine.png'))
 no_mine_img = pygame.image.load(join_path(path_imgs, 'no_mine.png'))
