@@ -72,20 +72,20 @@ tile_color = (102, 146, 233)
 active_tile_color = (142, 176, 220)
 open_tile_color = (191, 204, 225)
 # images
-path = 'data/images'
-flag_img = pygame.image.load(join_path(path, 'flag.png'))
-mine_img = pygame.image.load(join_path(path, 'mine.png'))
-no_mine_img = pygame.image.load(join_path(path, 'no_mine.png'))
+path_imgs = join_path('data', 'images')
+flag_img = pygame.image.load(join_path(path_imgs, 'flag.png'))
+mine_img = pygame.image.load(join_path(path_imgs, 'mine.png'))
+no_mine_img = pygame.image.load(join_path(path_imgs, 'no_mine.png'))
 
-go_to_menu = pygame.image.load('data\\images\\go_to_menu.png')
+go_to_menu = pygame.image.load(join_path(path_imgs, 'go_to_menu.png'))
 go_to_menu_activated = go_to_menu.copy()
 go_to_menu_activated.set_alpha(200)
 
-beybo = pygame.image.load('data\\images\\beybo.png')
-re_press = pygame.image.load('data\\images\\r_button_pressed.png')
-oh_no = pygame.image.load('data\\images\\oh_no.png')
-static = pygame.image.load('data\\images\\static.png')
-win = pygame.image.load('data\\images\\win.png')
+beybo = pygame.image.load(join_path(path_imgs, 'beybo.png'))
+re_press = pygame.image.load(join_path(path_imgs, 'r_button_pressed.png'))
+oh_no = pygame.image.load(join_path(path_imgs, 'oh_no.png'))
+static = pygame.image.load(join_path(path_imgs, 'static.png'))
+win = pygame.image.load(join_path(path_imgs, 'win.png'))
 
 nums = {
     1: pygame.font.SysFont('miriam', tile_size, 1).render('1', 1, (65, 79, 188)),
@@ -104,7 +104,7 @@ nums['size'] = nums[1].get_size()
 # -------------------------------------------MAIN MENU------------------------------------------------------ #
 def main_menu():
     pygame.display.set_caption('Minesweeper: Mode selection')
-    pygame.display.set_icon(pygame.image.load("data\\images\\mine.png"))
+    pygame.display.set_icon(pygame.image.load(join_path(path_imgs, 'mine.png')))
     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
     screen.fill(background_color)
     was_pressed = 0
