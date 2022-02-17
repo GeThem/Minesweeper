@@ -39,12 +39,14 @@ win_div_4 = WINDOW_SIZE_options[1] // 4
 
 background_color = (191, 196, 205)
 
+path_font = 'data/fonts'
+buttons_font = pygame.font.Font(join_path(path_font, 'freesansbold.ttf'), 22)
 buttons_text = {
-        0: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (70, 70, 70)),
-        1: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (70, 70, 70)),
-        2: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (70, 70, 70)),
-        10: pygame.font.SysFont('miriam', 22, 1).render('Newbie 10 mines (9x9)', 1, (230, 230, 230)),
-        11: pygame.font.SysFont('miriam', 22, 1).render('Amateur 40 mines (16x16)', 1, (230, 230, 230)),
+        0: buttons_font.render('Newbie 10 mines (9x9)', 1, (70, 70, 70)),
+        1: buttons_font.render('Amateur 40 mines (16x16)', 1, (70, 70, 70)),
+        2: buttons_font.render('Professional 99 mines (16x30)', 1, (70, 70, 70)),
+        10: buttons_font.render('Newbie 10 mines (9x9)', 1, (230, 230, 230)),
+        11: buttons_font.render('Amateur 40 mines (16x16)', 1, (230, 230, 230)),
         12: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (230, 230, 230)),
     }
 _, text_y = buttons_text[1].get_size()
@@ -87,24 +89,29 @@ oh_no = pygame.image.load(join_path(path_imgs, 'oh_no.png'))
 static = pygame.image.load(join_path(path_imgs, 'static.png'))
 win = pygame.image.load(join_path(path_imgs, 'win.png'))
 
+
+numbers_font = pygame.font.Font(join_path(path_font, 'JetBrainsMono-ExtraBold.ttf'), tile_size - 2)
 nums = {
-    1: pygame.font.SysFont('miriam', tile_size, 1).render('1', 1, (65, 79, 188)),
-    2: pygame.font.SysFont('miriam', tile_size, 1).render('2', 1, (29, 105, 0)),
-    3: pygame.font.SysFont('miriam', tile_size, 1).render('3', 1, (170, 6, 8)),
-    4: pygame.font.SysFont('miriam', tile_size, 1).render('4', 1, (1, 2, 128)),
-    5: pygame.font.SysFont('miriam', tile_size, 1).render('5', 1, (123, 0, 0)),
-    6: pygame.font.SysFont('miriam', tile_size, 1).render('6', 1, (4, 122, 125)),
-    7: pygame.font.SysFont('miriam', tile_size, 1).render('7', 1, (176, 5, 7)),
-    8: pygame.font.SysFont('miriam', tile_size, 1).render('8', 1, (168, 6, 15)),
+    1: numbers_font.render('1', 1, (65, 79, 188)),
+    2: numbers_font.render('2', 1, (29, 105, 0)),
+    3: numbers_font.render('3', 1, (170, 6, 8)),
+    4: numbers_font.render('4', 1, (1, 2, 128)),
+    5: numbers_font.render('5', 1, (123, 0, 0)),
+    6: numbers_font.render('6', 1, (4, 122, 125)),
+    7: numbers_font.render('7', 1, (176, 5, 7)),
+    8: numbers_font.render('8', 1, (168, 6, 15)),
     'size': 0
 }
 nums['size'] = nums[1].get_size()
+
+mine_counter_font = pygame.font.Font(join_path(path_font, 'Roboto-Bold.ttf'), 34)
+timer_font = pygame.font.Font(join_path(path_font, 'Roboto-Medium.ttf'), 25)
 
 
 # -------------------------------------------MAIN MENU------------------------------------------------------ #
 def main_menu():
     pygame.display.set_caption('Minesweeper: Mode selection')
-    pygame.display.set_icon(pygame.image.load(join_path(path_imgs, 'mine.png')))
+    pygame.display.set_icon(pygame.image.load(join_path(path_imgs, 'icon.ico')))
     screen = pygame.display.set_mode(WINDOW_SIZE_options, 0, 32)
     screen.fill(background_color)
     was_pressed = 0
@@ -261,12 +268,14 @@ def game(rows, columns, minecount):
     restart_button = pygame.Rect(77, 13, 54, 54)
     menu_button = pygame.Rect(boarder - 1, 13, 40, 54)
     # minecounter and timer outline
-    pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] / 2 - 31, top_info_size / 2 - 25, 62, 48))
+    pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] / 2 - 39, top_info_size / 2 - 25, 78, 48))
     pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] * 4 / 5 - 37, top_info_size / 2 - 19, 74, 38))
 
     pygame.draw.rect(screen, (100, 100, 100), menu_button)
     pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
     screen.blit(go_to_menu, menu_button)
+    
+    # ----------------------------------------------------LOOP START-----------------------------------------------------#
     while 1:
         pressed_tile = 0
 
@@ -422,9 +431,9 @@ def game(rows, columns, minecount):
         if minecount != counter_prev or was_pressed_counter == 0:
             counter_prev = minecount
             pygame.draw.rect(screen, active_tile_color,
-                             (WINDOW_SIZE[0] / 2 - 30, top_info_size / 2 - 24, 60, 46))
+                             (WINDOW_SIZE[0] / 2 - 38, top_info_size / 2 - 24, 76, 46))
 
-            mine_count = pygame.font.SysFont('arial', 37, 1).render(str(counter_prev), 1, (180, 0, 0))
+            mine_count = mine_counter_font.render(str(minecount), 1, (180, 0, 0))
             mine_count_sz = mine_count.get_size()
             screen.blit(mine_count, (WINDOW_SIZE[0] / 2 - mine_count_sz[0] / 2, top_info_size / 2 - mine_count_sz[1] / 2))
 
@@ -434,7 +443,7 @@ def game(rows, columns, minecount):
                 time_now = time() - time_start
             pygame.draw.rect(screen, active_tile_color,
                              (WINDOW_SIZE[0] * 4 / 5 - 36, top_info_size / 2 - 18, 72, 36))
-            timer = pygame.font.SysFont('arial', 29, 1).render(f'{time_now:.1f}', 1, (230, 230, 230))
+            timer = timer_font.render(f'{time_now:.1f}', 1, (230, 230, 230))
             timer_size = timer.get_size()
             screen.blit(timer, (WINDOW_SIZE[0] * 4 / 5 - timer_size[0] / 2, top_info_size / 2 - timer_size[1] / 2))
 
