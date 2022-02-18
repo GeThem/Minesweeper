@@ -5,8 +5,7 @@ Trying out pygame, i'm more than sure that coding could be done better >_<
 
 ***Is done!***
 
-![GIF](https://user-images.githubusercontent.com/99418179/154314654-47b77547-6989-4634-9b50-f9b8b5903a3a.gif)
-
+![Minesweeper2](https://user-images.githubusercontent.com/99418179/154635987-d1a080df-32d5-43d6-b6aa-651ebbcdd67b.gif)
 
 ## Updates
 
