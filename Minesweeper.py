@@ -24,7 +24,7 @@ buttons_text = {
         2: buttons_font.render('Professional 99 mines (16x30)', 1, (70, 70, 70)),
         10: buttons_font.render('Newbie 10 mines (9x9)', 1, (230, 230, 230)),
         11: buttons_font.render('Amateur 40 mines (16x16)', 1, (230, 230, 230)),
-        12: pygame.font.SysFont('miriam', 22, 1).render('Professional 99 mines (16x30)', 1, (230, 230, 230)),
+        12: buttons_font.render('Professional 99 mines (16x30)', 1, (230, 230, 230)),
     }
 _, text_y = buttons_text[1].get_size()
 button_x, button_y = win_div_4, win_div_4 * 2 // 3
