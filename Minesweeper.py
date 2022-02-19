@@ -9,29 +9,6 @@ clock = pygame.time.Clock()
 
 pygame.init()
 
-# ------------------------------------------PLAYGROUND GENERATION------------------------------------------- #
-matrix = []  # creates in game.py
-
-
-def generate(rows, columns, minecount, no_mine):
-    global matrix
-    matrix = [[0] * columns for _ in range(rows)]
-    mines = [(x, y) for x in range(columns) for y in range(rows)]
-
-    for x, y in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
-        y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
-        if 0 <= x_gr < columns and 0 <= y_gr < rows:
-            mines.pop(mines.index((x_gr, y_gr)))
-
-    for _ in range(minecount):
-        mine_x, mine_y = mines.pop(randrange(len(mines)))
-        matrix[mine_y][mine_x] = -1
-        for row, column in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
-            y_gr, x_gr = mine_y + row, mine_x + column
-            if 0 <= x_gr < columns and 0 <= y_gr < rows and matrix[y_gr][x_gr] != -1:
-                matrix[y_gr][x_gr] += 1
-
-
 # ------------------------------------------MODE MENU VARIABLES--------------------------------------------- #
 WINDOW_SIZE_options = (500, 300)
 win_half = WINDOW_SIZE_options[0] // 2
@@ -165,7 +142,6 @@ def main_menu():
 
 # -------------------------------------------GAME EXECUTION------------------------------------------------------ #
 def game(rows, columns, minecount):
-    global beybo, re_press
     # window size
     boarder = 30
     top_info_size = 80
@@ -193,6 +169,26 @@ def game(rows, columns, minecount):
     was_pressed_counter = 0
     was_pressed_normal = False
 
+    # ------------------------------------------PLAYGROUND GENERATION------------------------------------------- #
+    def generate(rows, columns, minecount, no_mine):
+        matrix = [[0] * columns for _ in range(rows)]
+        mines = [(x, y) for x in range(columns) for y in range(rows)]
+
+        for x, y in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
+            y_gr, x_gr = no_mine[1] + y, no_mine[0] + x
+            if 0 <= x_gr < columns and 0 <= y_gr < rows:
+                mines.pop(mines.index((x_gr, y_gr)))
+
+        for _ in range(minecount):
+            mine_x, mine_y = mines.pop(randrange(len(mines)))
+            matrix[mine_y][mine_x] = -1
+            for row, column in ((x, y) for x in range(-1, 2) for y in range(-1, 2)):
+                y_gr, x_gr = mine_y + row, mine_x + column
+                if 0 <= x_gr < columns and 0 <= y_gr < rows and matrix[y_gr][x_gr] != -1:
+                    matrix[y_gr][x_gr] += 1
+        return matrix
+    # ----------------------------------------------------------------------------------------------------------#
+    
     def open(x, y, status):
         """
         Opens a tile
@@ -326,26 +322,29 @@ def game(rows, columns, minecount):
             screen.blit(go_to_menu, menu_button)
             was_pressed_normal = False
 
+        # if mouse on tile
         if tile_status:
             if is_pressed:
                 if tile_status in (1, 2):
                     pygame.draw.rect(screen, buttons_color, (77, 13, 53, 53))
                     screen.blit(oh_no, restart_button)
                     pygame.draw.rect(screen, open_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
+            
             elif was_pressed:
                 if tile_status in (1, 2):
                     if was_pressed_counter == 0:
-                        generate(rows, columns, minecount_const, cur_tile)
+                        matrix = generate(rows, columns, minecount_const, cur_tile)
                         time_start = time()
                         was_pressed_counter += 1
                     pressed_tile = (*cur_tile, 0, matrix[cur_tile[1]][cur_tile[0]])
                     tiles[cur_tile[1]][cur_tile[0]] = 0
                 was_pressed = False
-
+            
             else:
                 if tile_status == 1:
                     pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
                     tiles[cur_tile[1]][cur_tile[0]] = 2
+                
                 elif tile_status == 5:
                     pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
                     screen.blit(flag_img, (mouse_pos[0], mouse_pos[1]))
@@ -365,6 +364,8 @@ def game(rows, columns, minecount):
 
         # if right button was released on closed tile, draw numbers
         if isinstance(pressed_tile, tuple):
+            
+            # if opened tile is 0
             if pressed_tile[3] == 0:
                 x2, y2 = pressed_tile[:2]
                 open(x2, y2, 1)
@@ -409,7 +410,7 @@ def game(rows, columns, minecount):
                     storage.append((x2, y2))
                     open(x2, y2, 1)
 
-            # lose
+            # lose / opened tile is mine
             elif pressed_tile[3] == -1:
                 lose = 1
                 game_is_going = 0
@@ -420,6 +421,8 @@ def game(rows, columns, minecount):
                             open(x, y, 3)
                         if 5 <= status <= 6:
                             open(x, y, 4)
+            
+            # opened tile is a number
             else:
                 open(pressed_tile[0], pressed_tile[1], 1)
                 sum_of_closed_tiles -= 1
