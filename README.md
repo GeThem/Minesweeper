@@ -23,7 +23,7 @@ Now can be started without python neither pygame, I think this is the end, the g
 
 ## P. S. (Author's note lol)
 ### Turns out having all code in one file is more effective
-Or maybe the problem is that i don't really know much about how pygame works.
+Or maybe the problem is that i don't really know much about how pygame works(Prolly this, I'm not that experienced afterall).
 
 And also despite all my thoughts about how great i optimised the game, this shit is still takes some visible part of PC's resources.
 
