@@ -161,13 +161,7 @@ def game(rows, columns, minecount):
                       WINDOW_SIZE[1] - top_info_size - boarder))
 
     tiles = tuple([1] * columns for _ in range(rows))
-    tile_status = 0  # 0 - closed tile/mouse out of screen, 1 - closed, 2 - closed active, 5 - flagged, 6 - flagged active
-
-    # mouse variables
-    is_pressed = False
-    was_pressed = False
-    was_pressed_counter = 0
-    was_pressed_normal = False
+    # 0 - closed tile/mouse out of screen, 1 - closed, 2 - closed active, 5 - flagged, 6 - flagged active
 
     # ------------------------------------------PLAYGROUND GENERATION------------------------------------------- #
     def generate(rows, columns, minecount, no_mine):
@@ -257,7 +251,7 @@ def game(rows, columns, minecount):
     time_start = 0
     time_now = 0
     sum_of_closed_tiles = rows * columns
-    p_tile = 0
+    prev_tile = 0
     counter_prev = minecount_const
     game_is_going = 1
 
@@ -270,7 +264,11 @@ def game(rows, columns, minecount):
     pygame.draw.rect(screen, (100, 100, 100), menu_button)
     pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
     screen.blit(go_to_menu, menu_button)
-    
+
+    # mouse variables
+    is_pressed = False
+    was_pressed = 0
+    was_pressed_counter = 0
     # ----------------------------------------------------LOOP START-----------------------------------------------------#
     while 1:
         pressed_tile = 0
@@ -287,17 +285,17 @@ def game(rows, columns, minecount):
 
         # mouse position processing
         mouse_pos = list(pygame.mouse.get_pos())
-        cur_tile = [-1, -1]
         if boarder + 1 < mouse_pos[0] < WINDOW_SIZE[0] - 1 - boarder and \
                 1 + top_info_size < mouse_pos[1] < WINDOW_SIZE[1] - 1 - boarder:
 
             cur_tile = [(mouse_pos[0] - boarder - 1) // (tile_size + 1),
-                        (mouse_pos[1] - top_info_size - 1) // (tile_size + 1)]
-            tile_status = tiles[cur_tile[1]][cur_tile[0]]
+                        (mouse_pos[1] - top_info_size - 1) // (tile_size + 1),
+                        0]
+            cur_tile[2] = tiles[cur_tile[1]][cur_tile[0]]
 
             mouse_pos = boarder + 1 + cur_tile[0] * (tile_size + 1), top_info_size + 1 + cur_tile[1] * (tile_size + 1)
         else:
-            tile_status = 0
+            cur_tile = [0, 0, 0]
 
         # buttons
         if restart_button.collidepoint(*mouse_pos):
@@ -305,66 +303,62 @@ def game(rows, columns, minecount):
                 pygame.draw.rect(screen, (100, 100, 100), (77, 13, 54, 54))
                 pygame.draw.rect(screen, (180, 180, 180), (78, 14, 53, 53))
                 screen.blit(re_press, restart_button)
-                was_pressed_normal = True
-            elif was_pressed_normal:
+            elif was_pressed:
                 return True
         elif menu_button.collidepoint(*mouse_pos):
             if is_pressed:
                 pygame.draw.rect(screen, (100, 100, 100), menu_button)
                 pygame.draw.rect(screen, (180, 180, 180), (boarder, 14, 39, 53))
                 screen.blit(go_to_menu_activated, menu_button)
-                was_pressed_normal = True
-            elif was_pressed_normal:
+            elif was_pressed:
                 return False
-        elif was_pressed_normal:
+        elif was_pressed:
             pygame.draw.rect(screen, (100, 100, 100), menu_button)
             pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
             screen.blit(go_to_menu, menu_button)
-            was_pressed_normal = False
+
 
         # if mouse on tile
-        if tile_status:
+        if cur_tile[2]:
             if is_pressed:
-                if tile_status in (1, 2):
+                if cur_tile[2] in (1, 2):
                     pygame.draw.rect(screen, buttons_color, (77, 13, 53, 53))
                     screen.blit(oh_no, restart_button)
-                    pygame.draw.rect(screen, open_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
+                    pygame.draw.rect(screen, open_tile_color, (*mouse_pos, tile_size, tile_size))
             
             elif was_pressed:
-                if tile_status in (1, 2):
+                if cur_tile[2] in (1, 2):
                     if was_pressed_counter == 0:
                         matrix = generate(rows, columns, minecount_const, cur_tile)
                         time_start = time()
                         was_pressed_counter += 1
-                    pressed_tile = (*cur_tile, 0, matrix[cur_tile[1]][cur_tile[0]])
+                    pressed_tile = (*cur_tile[:2], 0, matrix[cur_tile[1]][cur_tile[0]])
                     tiles[cur_tile[1]][cur_tile[0]] = 0
-                was_pressed = False
             
             else:
-                if tile_status == 1:
-                    pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
+                if cur_tile[2] == 1:
+                    pygame.draw.rect(screen, active_tile_color, (*mouse_pos, tile_size, tile_size))
                     tiles[cur_tile[1]][cur_tile[0]] = 2
                 
-                elif tile_status == 5:
-                    pygame.draw.rect(screen, active_tile_color, (mouse_pos[0], mouse_pos[1], tile_size, tile_size))
-                    screen.blit(flag_img, (mouse_pos[0], mouse_pos[1]))
+                elif cur_tile[2] == 5:
+                    pygame.draw.rect(screen, active_tile_color, (*mouse_pos, tile_size, tile_size))
+                    screen.blit(flag_img, mouse_pos)
                     tiles[cur_tile[1]][cur_tile[0]] = 6
-            tile_status = tiles[cur_tile[1]][cur_tile[0]]
+            cur_tile[2] = tiles[cur_tile[1]][cur_tile[0]]
 
         # draw tiles
-        if p_tile and p_tile[:2] != cur_tile:
-            if p_tile[2] in (1, 2):
+        if prev_tile and prev_tile[:2] != cur_tile[:2]:
+            if prev_tile[2] in (1, 2):
                 pygame.draw.rect(screen, tile_color, (*coords, tile_size, tile_size))
-                tiles[p_tile[1]][p_tile[0]] = 1
-            elif p_tile[2] == 6:
+                tiles[prev_tile[1]][prev_tile[0]] = 1
+            elif prev_tile[2] == 6:
                 pygame.draw.rect(screen, tile_color, (*coords, tile_size, tile_size))
                 screen.blit(flag_img,
-                            (1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)))
-                tiles[p_tile[1]][p_tile[0]] = 5
+                            (1 + boarder + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)))
+                tiles[prev_tile[1]][prev_tile[0]] = 5
 
         # if right button was released on closed tile, draw numbers
-        if isinstance(pressed_tile, tuple):
-            
+        if pressed_tile:
             # if opened tile is 0
             if pressed_tile[3] == 0:
                 x2, y2 = pressed_tile[:2]
@@ -427,8 +421,8 @@ def game(rows, columns, minecount):
                 open(pressed_tile[0], pressed_tile[1], 1)
                 sum_of_closed_tiles -= 1
 
-        p_tile = [cur_tile[0], cur_tile[1], tile_status]
-        coords = 1 + boarder + p_tile[0] * (tile_size + 1), 1 + top_info_size + p_tile[1] * (tile_size + 1)
+        prev_tile = cur_tile
+        coords = 1 + boarder + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)
 
         # draw mine counter
         if minecount != counter_prev or was_pressed_counter == 0:
@@ -463,29 +457,29 @@ def game(rows, columns, minecount):
                     elif status == 5:
                         open(x, y, 8)
 
+        was_pressed = False
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
-            if event.type == MOUSEBUTTONDOWN:
+            elif event.type == MOUSEBUTTONDOWN:
 
                 # flag actions
                 if event.button == 3:
-                    if tile_status == 6:
-                        tiles[p_tile[1]][p_tile[0]] = p_tile[2] = 2
+                    if prev_tile[2] == 6:
+                        tiles[prev_tile[1]][prev_tile[0]] = prev_tile[2] = 2
                         pygame.draw.rect(screen, active_tile_color, (*coords, tile_size, tile_size))
                         minecount += 1
-                    elif tile_status == 2:
-                        tiles[p_tile[1]][p_tile[0]] = p_tile[2] = 6
+                    elif prev_tile[2] == 2:
+                        tiles[prev_tile[1]][prev_tile[0]] = prev_tile[2] = 6
                         pygame.draw.rect(screen, active_tile_color, (*coords, tile_size, tile_size))
                         screen.blit(flag_img, coords)
                         minecount -= 1
                 else:
                     is_pressed = True
-                    was_pressed = True
             elif event.type == MOUSEBUTTONUP and event.button == 1:
                 is_pressed = False
-                was_pressed = tile_status
+                was_pressed = True
 
         pygame.display.update()
         clock.tick(60)
