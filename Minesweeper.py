@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
 from sys import exit
-from time import time
+from time import perf_counter
 from random import randrange
 from os.path import join as join_path
 
@@ -330,7 +330,7 @@ def game(rows, columns, minecount):
                 if cur_tile[2] in (1, 2):
                     if was_pressed_counter == 0:
                         matrix = generate(rows, columns, minecount_const, cur_tile)
-                        time_start = time()
+                        time_start = perf_counter()
                         was_pressed_counter += 1
                     pressed_tile = (*cur_tile[:2], 0, matrix[cur_tile[1]][cur_tile[0]])
                     tiles[cur_tile[1]][cur_tile[0]] = 0
@@ -437,7 +437,7 @@ def game(rows, columns, minecount):
         # draw timer
         if time_now <= 999 and game_is_going:
             if time_start:
-                time_now = time() - time_start
+                time_now = perf_counter() - time_start
             pygame.draw.rect(screen, active_tile_color,
                              (WINDOW_SIZE[0] * 4 / 5 - 36, top_info_size / 2 - 18, 72, 36))
             timer = timer_font.render(f'{time_now:.1f}', 1, (230, 230, 230))
