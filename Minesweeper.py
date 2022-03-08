@@ -143,10 +143,10 @@ def main_menu():
 # -------------------------------------------GAME EXECUTION------------------------------------------------------ #
 def game(rows, columns, minecount):
     # window size
-    boarder = 30
+    border = 30
     top_info_size = 80
-    WINDOW_SIZE = (1 + 2 * boarder + columns * (tile_size + 1),
-                   1 + boarder + top_info_size + rows * (tile_size + 1))
+    WINDOW_SIZE = (1 + 2 * border + columns * (tile_size + 1),
+                   1 + border + top_info_size + rows * (tile_size + 1))
 
     minecount_const = minecount
     # screen design
@@ -154,11 +154,11 @@ def game(rows, columns, minecount):
     screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)
     screen.fill(background_color)
     pygame.draw.rect(screen, (80, 80, 80),
-                     (boarder - 2, top_info_size - 2, WINDOW_SIZE[0] - 2 * boarder + 4,
-                      WINDOW_SIZE[1] - top_info_size - boarder + 4))
+                     (border - 2, top_info_size - 2, WINDOW_SIZE[0] - 2 * border + 4,
+                      WINDOW_SIZE[1] - top_info_size - border + 4))
     pygame.draw.rect(screen, behind_tiles_color,
-                     (boarder, top_info_size, WINDOW_SIZE[0] - 2 * boarder,
-                      WINDOW_SIZE[1] - top_info_size - boarder))
+                     (border, top_info_size, WINDOW_SIZE[0] - 2 * border,
+                      WINDOW_SIZE[1] - top_info_size - border))
 
     tiles = tuple([1] * columns for _ in range(rows))
     # 0 - closed tile/mouse out of screen, 1 - closed, 2 - closed active, 5 - flagged, 6 - flagged active
@@ -195,15 +195,15 @@ def game(rows, columns, minecount):
                 8: diactivate closed flagged tile
         """
         if 1 <= status <= 4:
-            coords = 1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)
+            coords = 1 + border + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)
             cur_elem = matrix[y][x]
             pygame.draw.rect(screen, open_tile_color, (*coords, tile_size, tile_size))
             if 1 <= status <= 3:
                 if cur_elem == -1:
                     screen.blit(mine_img, (*coords, tile_size, tile_size))
                 elif cur_elem:
-                    screen.blit(nums[cur_elem], ((tile_size - nums['size'][0]) / 2 + 2 + boarder + x * (tile_size + 1),
-                                         (tile_size - nums['size'][1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
+                    screen.blit(nums[cur_elem], ((tile_size - nums['size'][0]) / 2 + 2 + border + x * (tile_size + 1),
+                                                 (tile_size - nums['size'][1]) / 2 + 2 + top_info_size + y * (tile_size + 1)))
             elif status == 4:
                 if cur_elem == -1:
                     screen.blit(mine_img, (*coords, tile_size, tile_size))
@@ -213,7 +213,7 @@ def game(rows, columns, minecount):
             tiles[y][x] = 0
         elif 7 <= status <= 8:
             if status == 7:
-                screen.blit(mine_img, (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
+                screen.blit(mine_img, (1 + border + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1)))
             tiles[y][x] = 0
 
     def find_move(x, y):
@@ -245,7 +245,7 @@ def game(rows, columns, minecount):
     for y in range(rows):
         for x in range(columns):
             pygame.draw.rect(screen, tile_color,
-                             (1 + boarder + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
+                             (1 + border + x * (tile_size + 1), 1 + top_info_size + y * (tile_size + 1),
                               tile_size, tile_size))
 
     time_start = 0
@@ -256,13 +256,13 @@ def game(rows, columns, minecount):
     game_is_going = 1
 
     restart_button = pygame.Rect(77, 13, 54, 54)
-    menu_button = pygame.Rect(boarder - 1, 13, 40, 54)
+    menu_button = pygame.Rect(border - 1, 13, 40, 54)
     # minecounter and timer outline
     pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] / 2 - 39, top_info_size / 2 - 25, 78, 48))
     pygame.draw.rect(screen, behind_tiles_color, (WINDOW_SIZE[0] * 4 / 5 - 37, top_info_size / 2 - 19, 74, 38))
 
     pygame.draw.rect(screen, (100, 100, 100), menu_button)
-    pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
+    pygame.draw.rect(screen, buttons_color, (border - 1, 13, 39, 53))
     screen.blit(go_to_menu, menu_button)
 
     # mouse variables
@@ -285,15 +285,15 @@ def game(rows, columns, minecount):
 
         # mouse position processing
         mouse_pos = list(pygame.mouse.get_pos())
-        if boarder + 1 < mouse_pos[0] < WINDOW_SIZE[0] - 1 - boarder and \
-                1 + top_info_size < mouse_pos[1] < WINDOW_SIZE[1] - 1 - boarder:
+        if border + 1 < mouse_pos[0] < WINDOW_SIZE[0] - 1 - border and \
+                1 + top_info_size < mouse_pos[1] < WINDOW_SIZE[1] - 1 - border:
 
-            cur_tile = [(mouse_pos[0] - boarder - 1) // (tile_size + 1),
+            cur_tile = [(mouse_pos[0] - border - 1) // (tile_size + 1),
                         (mouse_pos[1] - top_info_size - 1) // (tile_size + 1),
                         0]
             cur_tile[2] = tiles[cur_tile[1]][cur_tile[0]]
 
-            mouse_pos = boarder + 1 + cur_tile[0] * (tile_size + 1), top_info_size + 1 + cur_tile[1] * (tile_size + 1)
+            mouse_pos = border + 1 + cur_tile[0] * (tile_size + 1), top_info_size + 1 + cur_tile[1] * (tile_size + 1)
         else:
             cur_tile = [0, 0, 0]
 
@@ -308,13 +308,13 @@ def game(rows, columns, minecount):
         elif menu_button.collidepoint(*mouse_pos):
             if is_pressed:
                 pygame.draw.rect(screen, (100, 100, 100), menu_button)
-                pygame.draw.rect(screen, (180, 180, 180), (boarder, 14, 39, 53))
+                pygame.draw.rect(screen, (180, 180, 180), (border, 14, 39, 53))
                 screen.blit(go_to_menu_activated, menu_button)
             elif was_pressed:
                 return False
         elif was_pressed:
             pygame.draw.rect(screen, (100, 100, 100), menu_button)
-            pygame.draw.rect(screen, buttons_color, (boarder - 1, 13, 39, 53))
+            pygame.draw.rect(screen, buttons_color, (border - 1, 13, 39, 53))
             screen.blit(go_to_menu, menu_button)
 
 
@@ -354,7 +354,7 @@ def game(rows, columns, minecount):
             elif prev_tile[2] == 6:
                 pygame.draw.rect(screen, tile_color, (*coords, tile_size, tile_size))
                 screen.blit(flag_img,
-                            (1 + boarder + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)))
+                            (1 + border + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)))
                 tiles[prev_tile[1]][prev_tile[0]] = 5
 
         # if right button was released on closed tile, draw numbers
@@ -422,7 +422,7 @@ def game(rows, columns, minecount):
                 sum_of_closed_tiles -= 1
 
         prev_tile = cur_tile
-        coords = 1 + boarder + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)
+        coords = 1 + border + prev_tile[0] * (tile_size + 1), 1 + top_info_size + prev_tile[1] * (tile_size + 1)
 
         # draw mine counter
         if minecount != counter_prev or was_pressed_counter == 0:
